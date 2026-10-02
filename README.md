@@ -2,7 +2,8 @@
 
 Um guia prático para aplicações de aprendizado de máquina em redes sem fio e IoT.
 
-**ERRC 2026 · 150 minutos · nível intermediário**  
+**ERRC 2026 · 150 minutos · nível intermediário**
+
 Lorenzo Moreira Donatti e Deivis Felipe Guerreiro Fagundes.
 
 Do problema de rede aos dados, ao modelo e à interpretação: duas aulas guiadas com
@@ -13,8 +14,8 @@ Conhecimentos recomendados: Python básico e conceitos básicos de redes.
 
 | Aula | Abrir |
 |---|---|
-| 01 — Localização por fingerprints LoRaWAN, Antwerp | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/LorenzoDonatti/ML_meets_networks_ERRC2026/blob/errc2026-v1.0/notebooks/01_localizacao.ipynb) |
-| 02 — Previsão de RSSI uma hora à frente | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/LorenzoDonatti/ML_meets_networks_ERRC2026/blob/errc2026-v1.0/notebooks/02_forecasting.ipynb) |
+| 01 — Localização por fingerprints LoRaWAN, Antwerp | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/LorenzoDonatti/ML_meets_networks_ERRC2026/blob/errc2026-v1.1/notebooks/01_localizacao.ipynb) |
+| 02 — Previsão de RSSI uma hora à frente | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/LorenzoDonatti/ML_meets_networks_ERRC2026/blob/errc2026-v1.1/notebooks/02_forecasting.ipynb) |
 
 1. Abra o notebook pelo botão e conecte um ambiente CPU padrão.
 2. Salve uma cópia no seu Google Drive se quiser guardar alterações.
@@ -22,14 +23,15 @@ Conhecimentos recomendados: Python básico e conceitos básicos de redes.
 4. Os CSVs são baixados automaticamente pelo GitHub Raw. Não é necessário clonar o repositório,
    montar o Drive ou enviar arquivos. É necessário acesso à Internet.
 
-Os botões apontam para a versão `errc2026-v1.0`. Os dados usados pelos notebooks estão fixados
+Os botões apontam para a versão `errc2026-v1.1`. Os dados usados pelos notebooks estão fixados
 no commit `e7b18b4133d3544ad4d6ed15e3599167031c54f7`, com verificação SHA-256 na leitura.
 Assim, uma mudança posterior na branch principal não muda os dados dessa edição da aula.
 O download ocorre na célula inicial; os gráficos seguintes usam os dados em memória.
 
-Se a leitura falhar, confira a conexão e execute novamente. Para acompanhar a explicação sem
-execução, baixe o HTML da aula e abra no navegador; não é necessário Python para consultar o HTML.
-Colab é o ambiente da atividade; os HTMLs não executam código.
+Os dois notebooks já contêm gráficos, tabelas e resultados salvos: você pode ler a análise antes
+mesmo de executar. Ao rodar novamente, as saídas são atualizadas a partir dos dados versionados.
+Se o download falhar, confira a conexão e tente novamente; as saídas salvas continuam disponíveis.
+Não distribuímos HTML. Para consulta local, use os notebooks em Jupyter.
 
 ## O que será feito
 
@@ -47,8 +49,8 @@ O tempo total inclui 15 min de motivação, 15 min de formulação, as duas prá
 ## Materiais
 
 - [Notebook 01](notebooks/01_localizacao.ipynb) e [notebook 02](notebooks/02_forecasting.ipynb).
-- [Slides em PDF](slides/minicurso.pdf) e [slides HTML](slides/minicurso.html) — baixe o HTML para navegar offline.
-- [Aula 01 executada em HTML](html/01_localizacao.html) e [aula 02 em HTML](html/02_forecasting.html) — baixe para visualizar.
+- [Slides acadêmicos em PDF](slides/minicurso.pdf), produzidos em LaTeX/Beamer.
+- [Fonte LaTeX](slides/minicurso.tex), [template](slides/template.tex) e [instruções de compilação](slides/README.md).
 - [Dados, fontes, licenças e transformações](data/README.md).
 - [Dependências para execução local opcional](requirements.txt).
 
