@@ -1,0 +1,40 @@
+{
+  "source": "https://doi.org/10.5281/zenodo.13835721",
+  "license": "CC-BY-4.0",
+  "rows": 1210,
+  "train": 984,
+  "test": 226,
+  "features": [
+    "rssi_1",
+    "snr_1",
+    "rssi_2",
+    "snr_2",
+    "rssi_3",
+    "snr_3",
+    "spreading_factor"
+  ],
+  "split": "GroupShuffleSplit(.2, random_state=42); blocos de 30 min por dispositivo.",
+  "purpose": "Diagnóstico retrospectivo; previsões pré-calculadas, treino sem previsões.",
+  "gateway_coordinates_lat_lon": [
+    [
+      42.46972,
+      -9.01345
+    ],
+    [
+      42.49955,
+      -9.00654
+    ],
+    [
+      42.50893,
+      -9.04902
+    ]
+  ],
+  "models": {
+    "rf": "100 árvores, max_depth=10, min_samples_leaf=3, seed=42; imputação mediana + indicadores.",
+    "knn": "k=5, weights=distance; imputação mediana + indicadores; StandardScaler no treino.",
+    "centroide": "Pesos proporcionais a 10**(RSSI/10), normalizados nas recepções presentes.",
+    "constante": "Mediana de cada coordenada do treino."
+  },
+  "sha256": "3db8290748ea5897d4c616ef455de70e77a514863bca84c052060bfe9c2e4c58",
+  "input_sha256": "19864d11c2285f581e2d6b0777e3a3bfc7f35ce65a844303b3bf20a173fc33c7"
+}
