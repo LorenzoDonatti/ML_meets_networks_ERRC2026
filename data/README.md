@@ -43,7 +43,16 @@ O agregado só é considerado disponível após fechar sua hora; não se comprov
 
 ## Caso complementar — Sálvora
 
-O primeiro notebook discute resultados de um experimento anterior, sem baixar outro dataset.
+O primeiro notebook inclui três figuras de um experimento anterior, sem treinamento extra em aula.
+`salvora_diagnostico.csv` contém 1.210 posições (984 treino / 226 teste), medições RSSI/SNR,
+identificação dos blocos e previsões dos quatro métodos nas linhas de teste. Ausências originais
+RSSI=0 foram interpretadas como falta de recepção, hipótese de curadoria; SNR correspondente
+também ficou ausente. SNR=0 com RSSI válido foi mantido. Blocos: 30 minutos por dispositivo.
+`salvora_manifest.json` registra parâmetros, gateways, split e hashes. Gráficos e métricas são
+recalculados ao executar o notebook; não entram como atributos de treinamento.
+O CSV é baixado do commit `57717d4745a1745b8484b035c5bb5a787b98d829`.
+Para reproduzir as previsões: `python scripts/prepare_salvora_case.py`, a partir da raiz;
+o script descarta as previsões armazenadas e usa somente as features e os rótulos originais.
 Fonte: López Escobar, Fondo-Ferreiro, González-Castaño e Gil-Castiñeira,
 [LoRa signal quality and GPS positioning time series dataset](https://doi.org/10.5281/zenodo.13835721),
 CC BY 4.0. Não comparar seus erros com Antwerp como ranking: cenários e protocolos são distintos.
