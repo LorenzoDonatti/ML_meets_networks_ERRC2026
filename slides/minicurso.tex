@@ -120,6 +120,83 @@ Não vamos treinar redes neurais nem estudar todas essas abordagens.
 \end{frame}
 
 \section{Formulação}
+\begin{frame}{LoRa e LoRaWAN: do sensor à aplicação}{O contexto dos nossos dados}
+\begin{columns}[T]
+\column{.48\textwidth}
+\begin{block}{LoRa: comunicação pelo rádio}
+Modulação usada para transmitir pequenos volumes de dados, com foco em longo alcance e baixo consumo.
+\end{block}
+\column{.48\textwidth}
+\begin{block}{LoRaWAN: organização da rede}
+Protocolo que coordena a comunicação dos dispositivos com a infraestrutura. LoRa e LoRaWAN não são sinônimos.
+\end{block}
+\end{columns}
+\vspace{3mm}
+\centering
+\begin{tikzpicture}
+\node[box,text width=2.3cm] (d) at (0,0) {Nó / dispositivo\\sensor ou rastreador};
+\node[box,text width=2.3cm] (g) at (3.4,0) {Gateway\\recebe pelo rádio};
+\node[box,text width=2.3cm] (s) at (6.8,0) {Servidor de rede\\reúne recepções};
+\node[box,text width=2.3cm] (a) at (10.2,0) {Aplicação\\usa os dados};
+\draw[arrow] (d)--node[above,font=\scriptsize]{LoRa}(g);
+\draw[arrow] (g)--node[above,font=\scriptsize]{rede IP}(s);
+\draw[arrow] (s)--(a);
+\end{tikzpicture}
+\par\vspace{3mm}
+\raggedright
+\small \textbf{Uplink}: mensagem do dispositivo para a rede. Um mesmo uplink pode chegar a vários gateways. Esquema simplificado.
+\par\scriptsize Fonte: \href{https://www.thethingsnetwork.org/docs/lorawan/what-is-lorawan/}{The Things Network: LoRa e LoRaWAN}.
+\end{frame}
+
+\begin{frame}{RSSI: com que potência o sinal chegou?}{Received Signal Strength Indicator}
+\begin{block}{A medida que aparece nos dois estudos}
+RSSI é um indicador da potência recebida, reportado em \textbf{dBm} nos nossos dados.
+dBm expressa potência em escala logarítmica, em relação a 1 mW.
+\end{block}
+\centering
+\begin{tikzpicture}
+\draw[arrow] (0,0)--(10,0);
+\foreach \x/\v in {1/-120,4/-100,7/-80}{
+  \draw (\x,-.12)--(\x,.12);
+  \node[below] at (\x,-.12) {$\v$ dBm};
+}
+\node[above] at (5,.15) {Potência recebida crescente};
+\end{tikzpicture}
+\par\vspace{6mm}
+\raggedright
+\textbf{$-80$ dBm é mais forte que $-100$ dBm.} O sinal negativo não significa erro na medida.
+\begin{itemize}
+\item Não é uma medida direta de distância nem de taxa de entrega.
+\item Obstáculos, antenas e condições de propagação também afetam o valor.
+\end{itemize}
+\scriptsize Valores ilustrativos; não são faixas universais de qualidade.
+Fonte: \href{https://www.thethingsnetwork.org/docs/lorawan/rssi-and-snr/}{The Things Network: RSSI e SNR}.
+\end{frame}
+
+\begin{frame}{SNR: quanto o sinal se destaca do ruído?}{Signal-to-Noise Ratio}
+\begin{columns}[T]
+\column{.48\textwidth}
+\begin{block}{RSSI: potência recebida}
+Expressa em \textbf{dBm}.\\[2mm]
+Pergunta: com que intensidade chegou?
+\end{block}
+\column{.48\textwidth}
+\begin{block}{SNR: relação sinal/ruído}
+Expressa em \textbf{dB}.\\[2mm]
+Pergunta: como o sinal se compara ao ruído?
+\end{block}
+\end{columns}
+\vspace{2mm}
+\begin{itemize}
+\item Mesmo sinal recebido, mais ruído: menor SNR.
+\item SNR negativo significa sinal abaixo da potência do ruído. LoRa pode decodificar nessas condições, dentro dos limites do receptor e da configuração.
+\item RSSI e SNR são medições da recepção, não garantias de sucesso dos próximos pacotes.
+\end{itemize}
+\textbf{Na prática:} vamos usar RSSI; SNR ajuda a entender o contexto, mas não é uma entrada obrigatória.
+\par\vspace{2mm}
+\scriptsize Fonte: \href{https://www.thethingsnetwork.org/docs/lorawan/rssi-and-snr/}{The Things Network: RSSI e SNR}.
+\end{frame}
+
 \begin{frame}{O que a rede observa?}{Uma transmissão, várias recepções — valores ilustrativos}
 \centering
 \begin{tikzpicture}
