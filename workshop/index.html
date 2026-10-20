@@ -291,11 +291,12 @@ details.reveal p{margin-top:6px}
 <section class="slide" id="s-chirp" data-sec="Formulação">
   <div class="kicker">camada física · LoRa</div>
   <h2>LoRa transmite com chirps</h2>
-  <p class="lead">Cada símbolo é uma varredura de frequência dentro de 125 kHz. A informação está em <b>onde a varredura começa</b>.</p>
+  <p class="lead">Um <b>chirp</b> é um "assobio" que desliza do grave ao agudo dentro de 125 kHz. Cada símbolo é um chirp, e a informação está em <b>onde ele começa</b>.</p>
   <div class="body">
     <div class="col">
       <canvas id="c-chirp"></canvas>
       <div class="controls"><span class="label">Spreading factor</span><span class="seg" id="chirp-sf"></span><button class="b" id="chirp-new">sortear dados</button></div>
+      <div class="controls"><span class="label">eixo do tempo</span><span class="seg" id="chirp-scale"></span></div>
     </div>
     <div class="panel side">
       <div class="grid2">
@@ -308,7 +309,7 @@ details.reveal p{margin-top:6px}
       <div class="vec" id="chirp-data" style="font-size:13px"></div>
       <div class="label">duração de 1 símbolo, em escala</div>
       <div id="chirp-bars" style="display:flex;flex-direction:column;gap:5px"></div>
-      <p class="note">Cada SF a mais dobra a duração do símbolo: mais energia por bit, mais alcance, mais tempo no ar.</p>
+      <p class="note"><b>Preâmbulo:</b> chirps iguais que avisam "vai chegar um pacote" e deixam o receptor acertar o relógio. <b>Sync:</b> chirps invertidos (descendo) que marcam onde começam os dados. Cada SF a mais <b>não repete</b> o pacote: deixa cada chirp duas vezes mais lento e soma 1 bit por símbolo.</p>
     </div>
   </div>
 </section>
@@ -1060,21 +1061,30 @@ function drawDev(ctx,x,y){ctx.strokeStyle=A(C.pkt,.55);ctx.lineWidth=2;ctx.begin
     $('chirp-bars').innerHTML=[7,8,9,10,11,12].map(s=>{const t=2**s/125;return`<div class="fp" style="grid-template-columns:44px 1fr 74px"><span style="${s===sf?'color:var(--accent);font-weight:700':''}">SF${s}</span><div class="bar"><i style="width:${t/32.768*100}%;${s===sf?'':'opacity:.45'}"></i></div><span>${fmt(t,t<10?2:1)} ms</span></div>`;}).join('');}
   seg('chirp-sf',[7,8,9,10,11,12].map(s=>[s,'SF'+s]),7,v=>{sf=v;newVals();});
   $('chirp-new').onclick=newVals;
-  S['s-chirp']={frame(t){const{ctx,w,h}=c;bg(c);const x0=62,x1=w-14,y0=40,y1=h-58,units=14,uw=(x1-x0)/units;
+  let scale='ms';const WIN=40;
+  seg('chirp-scale',[['ms','tempo real · janela de 40 ms'],['sym','1 coluna = 1 símbolo']],'ms',v=>scale=v);
+  S['s-chirp']={frame(t){const{ctx,w,h}=c;bg(c);const x0=62,x1=w-14,y0=40,y1=h-58,units=14,M=2**sf,ts=M/125,real=scale==='ms';
+    const uw=real?(x1-x0)*ts/WIN:(x1-x0)/units;
     const segs=[...Array(8)].map(()=>({k:'up'})).concat([{k:'dn'},{k:'dn'}],vals.map(v=>({k:'d',v})));
-    ctx.strokeStyle=C.grid;ctx.lineWidth=1;ctx.beginPath();for(let k=0;k<=units;k++){ctx.moveTo(x0+k*uw,y0);ctx.lineTo(x0+k*uw,y1);}for(const yy of[y0,(y0+y1)/2,y1]){ctx.moveTo(x0,yy);ctx.lineTo(x1,yy);}ctx.stroke();
+    ctx.strokeStyle=C.grid;ctx.lineWidth=1;ctx.beginPath();
+    if(real){for(let ms=0;ms<=WIN;ms+=5){const x=x0+ms/WIN*(x1-x0);ctx.moveTo(x,y0);ctx.lineTo(x,y1);}}else{for(let k=0;k<=units;k++){ctx.moveTo(x0+k*uw,y0);ctx.lineTo(x0+k*uw,y1);}}
+    for(const yy of[y0,(y0+y1)/2,y1]){ctx.moveTo(x0,yy);ctx.lineTo(x1,yy);}ctx.stroke();
+    if(real)for(let ms=0;ms<=WIN;ms+=5)txt(ctx,ms+' ms',x0+ms/WIN*(x1-x0),y1+30,{a:'center',s:10});
     txt(ctx,'+62,5',x0-8,y0+4,{a:'right',s:10.5});txt(ctx,'f₀',x0-8,(y0+y1)/2+4,{a:'right',s:10.5});txt(ctx,'−62,5',x0-8,y1+4,{a:'right',s:10.5});txt(ctx,'kHz',x0-8,y1+18,{a:'right',s:10});
-    const brk=(a,b,lab,col)=>{const xa=x0+a*uw+3,xb=x0+b*uw-3;ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(xa,y0-10);ctx.lineTo(xa,y0-16);ctx.lineTo(xb,y0-16);ctx.lineTo(xb,y0-10);ctx.stroke();txt(ctx,lab,(xa+xb)/2,y0-21,{a:'center',c:col,s:11,w:600});};
+    const brk=(a,b,lab,col)=>{const xa=x0+a*uw+3;if(xa>x1)return;const xb=Math.min(x0+b*uw-3,x1);ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(xa,y0-10);ctx.lineTo(xa,y0-16);ctx.lineTo(xb,y0-16);if(xb<x1)ctx.lineTo(xb,y0-10);ctx.stroke();txt(ctx,xb-xa<40?lab.split(' ')[0].slice(0,4):lab,(xa+xb)/2,y0-21,{a:'center',c:col,s:11,w:600});};
     brk(0,8,'preâmbulo · 8 up-chirps',C.accent);brk(8,10,'sync',C.accent2);brk(10,14,'dados',C.pkt);
-    const play=(t*1.5)%(units+2.5);const Y=f=>y0+(.5-f)*(y1-y0);const M=2**sf;
-    segs.forEach((s,k)=>{const col=s.k==='up'?C.accent:s.k==='dn'?C.accent2:C.pkt;
+    const play=real?((t*WIN/6)%(WIN+4))/ts:(t*1.5)%(units+2.5);const Y=f=>y0+(.5-f)*(y1-y0);
+    ctx.save();ctx.beginPath();ctx.rect(x0,0,x1-x0,h);ctx.clip();
+    segs.forEach((s,k)=>{if(x0+k*uw>x1)return;const col=s.k==='up'?C.accent:s.k==='dn'?C.accent2:C.pkt;
       for(const pass of[0,1]){const lim=pass?clamp(play-k,0,1):1;if(lim<=0)continue;ctx.strokeStyle=pass?col:A(col,.22);ctx.lineWidth=pass?2.4:1.6;ctx.beginPath();let prev=null;
         for(let i=0;i<=80;i++){const u=i/80*lim;let f,fr;if(s.k==='up')f=u-.5;else if(s.k==='dn')f=.5-u;else{fr=(s.v/M+u)%1;f=fr-.5;}
           const X=x0+(k+u)*uw,Yv=Y(f);if(prev!==null&&s.k==='d'&&fr<prev)ctx.moveTo(X,Yv);else if(i===0)ctx.moveTo(X,Yv);else ctx.lineTo(X,Yv);prev=fr;}
         ctx.stroke();}
-      if(s.k==='d'){txt(ctx,'v='+s.v,x0+(k+.5)*uw,y1+16,{a:'center',c:C.pkt,s:10.5,w:600});const fy=Y(s.v/M-.5);dot(ctx,x0+k*uw+1.5,fy,3.5,C.pkt);}});
-    if(play<units){const px=x0+play*uw;ctx.strokeStyle=A(C.text,.5);ctx.lineWidth=1;ctx.setLineDash([3,4]);ctx.beginPath();ctx.moveTo(px,y0-6);ctx.lineTo(px,y1+4);ctx.stroke();ctx.setLineDash([]);}
-    txt(ctx,'tempo →',x1,h-14,{a:'right',s:11});txt(ctx,'● início da varredura = valor do símbolo',x0,h-14,{c:C.pkt,s:11});}};
+      if(s.k==='d'){if(uw>34)txt(ctx,'v='+s.v,x0+(k+.5)*uw,y1+16,{a:'center',c:C.pkt,s:10.5,w:600});const fy=Y(s.v/M-.5);dot(ctx,x0+k*uw+1.5,fy,3.5,C.pkt);}});
+    ctx.restore();
+    const px=x0+play*uw;if(play<units&&px<=x1){ctx.strokeStyle=A(C.text,.5);ctx.lineWidth=1;ctx.setLineDash([3,4]);ctx.beginPath();ctx.moveTo(px,y0-6);ctx.lineTo(px,y1+4);ctx.stroke();ctx.setLineDash([]);}
+    if(real){const tot=ts*units;txt(ctx,`1 símbolo = ${fmt(ts,ts<10?2:1)} ms · quadro inteiro = ${fmt(tot,tot<100?1:0)} ms`+(tot>WIN?' (não cabe na janela)':''),x0,h-10,{c:C.text,s:11,w:600});txt(ctx,'câmera lenta: 40 ms levam 6 s',x1,h-10,{a:'right',s:10.5});}
+    else{txt(ctx,'tempo →',x1,h-14,{a:'right',s:11});txt(ctx,'● início da varredura = valor do símbolo · aqui todo SF parece igual',x0,h-14,{c:C.pkt,s:11});}}};
 })();
 
 /* ============ 3 · SF × alcance × tempo no ar ============ */
