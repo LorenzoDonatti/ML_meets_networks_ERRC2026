@@ -5,6 +5,16 @@
 \usepackage{amsmath,amssymb}
 \usepackage{lmodern}
 \usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{booktabs}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\tikzset{
+  box/.style={draw=lscgreen,fill=lscgreen!7,rounded corners=2pt,align=center,
+    text width=2.8cm,minimum height=1cm,font=\small,
+    execute at begin node={\hyphenpenalty=10000\exhyphenpenalty=10000}},
+  arrow/.style={-{Stealth[length=2mm]},thick,color=lscgreen},
+  note/.style={align=center,font=\footnotesize,text width=3cm}
+}
 \mode<presentation>{
   \usetheme{Dresden}
   \usecolortheme{lsc}
@@ -14,6 +24,9 @@
 \setbeamertemplate{navigation symbols}{}
 \setbeamersize{text margin left=9mm,text margin right=9mm}
 \logo{}
+\newcommand{\coursefigure}[2]{%
+  \centering\includegraphics[width=.94\textwidth,height=.53\textheight,keepaspectratio]{figures/#1}%
+  \par{\scriptsize #2\par}\vspace{1mm}}
 \title[ML Meets Networks]{Machine Learning Meets Networks}
 \subtitle{Guia prático para aplicações de aprendizado de máquina em redes sem fio e IoT}
 \author[Donatti \& Fagundes]{Lorenzo Moreira Donatti\\Deivis Felipe Guerreiro Fagundes}
@@ -21,141 +34,435 @@
 \date{2026}
 \hypersetup{pdftitle={Machine Learning Meets Networks — ERRC 2026},pdfauthor={Lorenzo Moreira Donatti; Deivis Felipe Guerreiro Fagundes}}
 \begin{document}
-\begin{frame}[plain]\titlepage\end{frame}
+% Roteiro de 150 minutos. Os slides das práticas substituem explicações do notebook.
+\begin{frame}[plain]
+\titlepage
+\end{frame}
 
-\begin{frame}{Roteiro}\tableofcontents\end{frame}
+\section{Problemas}
+\begin{frame}{Duas frentes, um mesmo método}{O que vamos fazer}
+\begin{columns}[T]
+\column{.48\textwidth}
+\begin{block}{1. Localização}
+Um pacote foi recebido.\\[2mm]
+\textbf{Onde estava o dispositivo?}\\[2mm]
+Sinais de vários gateways\\
+$\downarrow$\\
+posição estimada
+\end{block}
+Antwerp: prática principal.\\
+Sálvora: contraponto sobre avaliação.
+\column{.48\textwidth}
+\begin{block}{2. Previsão temporal}
+Temos o histórico de um enlace.\\[2mm]
+\textbf{Qual será o RSSI na próxima hora?}\\[2mm]
+Sinais de vários instantes\\
+$\downarrow$\\
+valor futuro estimado
+\end{block}
+Um enlace do dataset de Goldoni et al.
+\end{columns}
+\end{frame}
 
-\section{Introdução}
+\begin{frame}{Por que essas perguntas interessam a redes?}{Da aplicação ao dado}
+\begin{columns}[T]
+\column{.48\textwidth}
+\begin{block}{Localização de um ativo}
+Um equipamento transmite pela rede. Queremos uma indicação de sua posição sem fornecer seu GPS ao estimador.
+\end{block}
+Serve para indicar uma região?\\
+É preciso encontrar uma sala?
+\column{.48\textwidth}
+\begin{block}{Monitoramento de um enlace}
+Um sensor envia telemetria regularmente. Queremos antecipar a evolução de uma medida do sinal.
+\end{block}
+Há informação no histórico?\\
+Ela acrescenta algo ao último valor?
+\end{columns}
+\vspace{3mm}
+\textbf{Limite:} prever RSSI não equivale a prever falha, perda de pacotes ou disponibilidade.
+\end{frame}
 
-\begin{frame}{Objetivo do minicurso}{Introdução}
-\begin{itemize}\setlength{\itemsep}{.7em}
-\item Formular problemas de redes a partir dos dados disponíveis.
-\item Localização: sinais de vários gateways \(\rightarrow\) posição.
-\item Forecasting: histórico de um enlace \(\rightarrow\) RSSI da próxima hora.
+\begin{frame}{Que tipo de problema de IA é esse?}{O mínimo para orientar as práticas}
+\small
+\begin{tabular}{p{3cm}p{5cm}p{4cm}}
+\toprule
+Abordagem & Informação para aprender & Exemplo em redes\\
+\midrule
+Supervisionado & Exemplos com resposta conhecida & Sinal $\rightarrow$ posição\\[2mm]
+Não supervisionado & Procurar estrutura sem resposta-alvo fornecida & Agrupar perfis de tráfego\\[2mm]
+Por reforço & Ações, consequências e recompensas & Escolher ações de controle\\
+\bottomrule
+\end{tabular}
+\vspace{4mm}
+\begin{block}{Nosso recorte}
+Os dois exercícios usam \textbf{regressão supervisionada}: estimar valores numéricos.
+No forecasting, construímos os exemplos a partir do histórico.
+\end{block}
+Se a resposta fosse uma categoria (``bom/ruim''), seria classificação.\\
+Não vamos treinar redes neurais nem estudar todas essas abordagens.
+\end{frame}
+
+\begin{frame}{O caminho que vamos repetir}{A escolha do algoritmo vem depois da pergunta}
+\centering
+\begin{tikzpicture}
+\node[box] (p) at (0,0) {Pergunta de rede\\e instante da decisão};
+\node[box] (d) at (4,0) {Observação\\entradas $X$, resposta $y$};
+\node[box] (s) at (8,0) {Divisão dos dados\\o que queremos testar?};
+\node[box] (b) at (0,-2) {Baseline\\uma referência simples};
+\node[box] (m) at (4,-2) {Modelo\\aprender só no treino};
+\node[box] (e) at (8,-2) {Erro e interpretação\\isso ajuda a rede?};
+\draw[arrow] (p)--(d); \draw[arrow] (d)--(s);
+\draw[arrow] (s.south)--++(0,-.4)-|($(b.north)+(0,.4)$)--(b.north);
+\draw[arrow] (b)--(m); \draw[arrow] (m)--(e);
+\end{tikzpicture}
+\par\vspace{3mm}Hoje: aprender a justificar esse caminho, não decorar algoritmos.
+\end{frame}
+
+\section{Formulação}
+\begin{frame}{O que a rede observa?}{Uma transmissão, várias recepções — valores ilustrativos}
+\centering
+\begin{tikzpicture}
+\node[box] (tx) at (0,0) {Dispositivo\\posição desconhecida};
+\node[box] (a) at (4,1.5) {Gateway A\\RSSI: $-80$ dBm};
+\node[box] (b) at (4,0) {Gateway B\\RSSI: $-105$ dBm};
+\node[box] (c) at (4,-1.5) {Gateway C\\sem recepção};
+\node[box] (f) at (8,0) {Fingerprint\\$[-80,\,-105,\,\varnothing]$};
+\draw[arrow] (tx)--(a); \draw[arrow] (tx)--(b);
+\draw[arrow,dashed] (tx)--(c);
+\draw[arrow] (a)--(f); \draw[arrow] (b)--(f); \draw[arrow,dashed] (c)--(f);
+\end{tikzpicture}
+\par\vspace{3mm}
+RSSI: potência recebida. SNR: relação sinal/ruído.\\
+O gateway ausente não mediu uma potência de zero dBm.
+\end{frame}
+
+\begin{frame}{O instante define o que pode entrar}{Localização depois da recepção}
+\centering
+\begin{tikzpicture}
+\node[box] (t) at (0,0) {Transmitir\\o pacote};
+\node[box] (r) at (4,0) {Reunir as recepções\\RSSI e SNR disponíveis};
+\node[box] (i) at (8,0) {Estimar\\a posição};
+\draw[arrow] (t)--(r); \draw[arrow] (r)--(i);
+\node[note] at (0,-1.5) {Antes: não sabemos o RSSI deste pacote.};
+\node[note] at (8,-1.5) {Depois: podemos usá-lo como entrada.};
+\end{tikzpicture}
+\begin{block}{Pergunta à turma}
+E se quiséssemos escolher uma configuração \emph{antes} de transmitir?
+\end{block}
+Em operação, também seria necessário definir quanto esperar pelas recepções.
+\end{frame}
+
+\begin{frame}{Por que o sinal mais forte não resolve tudo?}{RSSI não é uma régua de distância}
+\centering
+\begin{tikzpicture}
+\node[box] (g) at (4,0) {Gateway};
+\node[box] (a) at (0,0) {Posição A\\perto, com obstáculo};
+\node[box] (b) at (9,0) {Posição B\\longe, em outra condição};
+\draw[fill=gray!50] (2,-.7) rectangle (2.15,.7);
+\draw[arrow,dashed] (a)--(g);
+\draw[arrow] (b)--(g);
+\node[note,text width=9cm] at (4.5,-1.5) {A e B podem produzir potências semelhantes. Esquema qualitativo, não modelo de propagação.};
+\end{tikzpicture}
+\begin{itemize}
+\item Ambiente e antenas também afetam a recepção.
+\item O padrão conjunto de vários receptores pode reduzir a ambiguidade.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Da pergunta à avaliação}{Introdução}
-\begin{itemize}\setlength{\itemsep}{.7em}
-\item Definir observação, entradas e resposta.
-\item Separar os dados conforme o uso esperado.
-\item Comparar com uma referência simples; interpretar o erro na aplicação.
-\end{itemize}
+\begin{frame}{De uma coleta a uma tabela supervisionada}{Exemplo fictício; não são dados de Antwerp}
+\centering
+\begin{tabular}{c r r r c}
+\toprule
+Pacote & RSSI A & RSSI B & RSSI C & Posição GPS\\
+\midrule
+1 & $-80$ & $-105$ & ausente & $(x_1,y_1)$\\
+2 & $-103$ & $-82$ & $-110$ & $(x_2,y_2)$\\
+3 & $-91$ & ausente & $-88$ & $(x_3,y_3)$\\
+\bottomrule
+\end{tabular}
+\vspace{4mm}
+\begin{columns}[T]
+\column{.48\textwidth}
+\begin{block}{Entradas $X$}
+O fingerprint que teremos ao receber um novo pacote.
+\end{block}
+\column{.48\textwidth}
+\begin{block}{Resposta $y$}
+Coordenadas conhecidas na coleta, usadas para ensinar e avaliar.
+\end{block}
+\end{columns}
+Posição é uma resposta numérica de duas componentes: \textbf{regressão multissaída}.
 \end{frame}
 
-\begin{frame}{Informação disponível}{Introdução}
-\begin{itemize}\setlength{\itemsep}{.7em}
-\item Após a recepção: RSSI e SNR podem ajudar a localizar o transmissor.
-\item Antes da transmissão: essas medidas ainda não existem.
-\item GPS fornece o rótulo, não uma entrada para localizar.
-\end{itemize}
+\begin{frame}{Aprender não é consultar o GPS do novo pacote}{Treinamento e uso do modelo}
+\centering
+\begin{tikzpicture}
+\node[box] (x) at (0,0) {Fingerprints\\e GPS do treino};
+\node[box] (fit) at (4,0) {Treinamento};
+\node[box] (model) at (8,0) {Modelo ajustado};
+\node[box] (new) at (0,-2) {Novo fingerprint\\sem fornecer GPS};
+\node[box] (predict) at (4,-2) {Aplicar o modelo};
+\node[box] (pos) at (8,-2) {Posição estimada};
+\draw[arrow] (x)--(fit); \draw[arrow] (fit)--(model);
+\draw[arrow] (model.south)--++(0,-.4)-|(predict.north);
+\draw[arrow] (new)--(predict); \draw[arrow] (predict)--(pos);
+\end{tikzpicture}
+\par\vspace{3mm}
+No teste, guardamos o GPS real para conferir o erro, não para produzir a estimativa.
 \end{frame}
 
 \section{Localização}
-
-\begin{frame}{Localização em Antwerp}{Notebook 01 \textperiodcentered{} 40 min}
-\begin{itemize}\setlength{\itemsep}{.7em}
-\item 12.000 pacotes; RSSI de 39 gateways com coordenadas conhecidas.
-\item Dias anteriores: treino; intermediários: validação; posteriores: teste.
-\item Explorar a coleta antes dos modelos.
+\begin{frame}{Antwerp: investigar a coleta}{Abrir notebook 01 — seções 0 a 2}
+\coursefigure{01_localizacao_03.png}{RSSI por receptor, apenas no treino. Dados: Aernouts et al., Antwerp.}
+\begin{itemize}
+\item Recorte: 12 mil pacotes e 39 gateways com coordenadas conhecidas.
+\item Onde há observações? Que sinais distinguem essas regiões?
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Fingerprints de rádio}{Notebook 01 \textperiodcentered{} exploração}
-\centering\includegraphics[width=.92\textwidth,height=.54\textheight,keepaspectratio]{figures/01_localizacao_03.png}
-{\par\scriptsize Antwerp: RSSI por gateway, apenas treino. Aernouts et al.\par}
-\begin{itemize}\footnotesize
-\item Cada coluna identifica um receptor; ausência também faz parte do padrão.
-\item Mesmo RSSI não implica mesma posição.
+\begin{frame}{Três estratégias para o mesmo problema}{Notebook 01 — seção 4; sem aprofundar os algoritmos}
+\small
+\begin{tabular}{p{2.5cm}p{5.3cm}p{4.2cm}}
+\toprule
+Método & Como produz a posição & Informação necessária\\
+\midrule
+Centroide ponderado & Combina posições de gateways; sinal forte recebe maior peso & RSSI e coordenadas dos gateways\\[2mm]
+$k$-NN & Busca cinco fingerprints semelhantes e combina suas posições & Fingerprints rotulados com GPS\\[2mm]
+Random Forest & Combina regras aprendidas por várias árvores & Fingerprints rotulados com GPS\\
+\bottomrule
+\end{tabular}
+\vspace{3mm}
+A posição mediana do treino é um \textbf{controle sem sinais}, não um sistema de localização.
+\end{frame}
+
+\begin{frame}{Que generalização estamos avaliando?}{Notebook 01 — seção 3, antes de treinar}
+\centering
+\begin{tikzpicture}
+\node[box] (t) at (0,0) {Treino\\8.000 pacotes};
+\node[box] (v) at (4,0) {Validação\\2.000 pacotes};
+\node[box] (s) at (8,0) {Teste\\2.000 pacotes};
+\draw[arrow] (t)--node[above,font=\scriptsize]{tempo}(v);
+\draw[arrow] (v)--(s);
+\node[note] at (0,-1.3) {Aprender relações};
+\node[note] at (4,-1.3) {Conferir escolhas};
+\node[note] at (8,-1.3) {Avaliar sem reajustar};
+\end{tikzpicture}
+\begin{itemize}
+\item Dias inteiros, em ordem temporal; lugares e dispositivos podem se repetir.
+\item Pergunta: localizar pacotes posteriores \textbf{desta rede}.
+\item Não é um teste em regiões inéditas nem em outra cidade.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Métodos e avaliação}{Notebook 01 \textperiodcentered{} modelos}
-\begin{itemize}\setlength{\itemsep}{.7em}
-\item Centroide ponderado: combina posições dos gateways.
-\item k-NN e Random Forest: aprendem com fingerprints rotulados.
-\item Mediana e P90 em metros; recortes espaciais e por recepção.
+\begin{frame}{Erro em metros: o que significa?}{Notebook 01 — seção 5}
+\centering
+\begin{tikzpicture}
+\fill[lscgreen] (0,0) circle (.09);
+\node[below] at (0,-.1) {GPS real};
+\draw[thick] (6.85,-.15)--(7.15,.15) (6.85,.15)--(7.15,-.15);
+\node[below] at (7,-.1) {Estimativa};
+\draw[<->,thick] (0,.5)--node[above]{distância geográfica}(7,.5);
+\end{tikzpicture}
+\vspace{5mm}
+\begin{itemize}
+\item \textbf{Mediana:} metade dos erros é menor ou igual a esse valor.
+\item \textbf{P90:} 90\% dos erros ficam até esse valor; não é o erro máximo.
+\item A tolerância depende do uso: localizar uma sala não é indicar uma região.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Sálvora: concentração espacial}{Notebook 01 \textperiodcentered{} estudo de caso}
-\centering\includegraphics[width=.92\textwidth,height=.54\textheight,keepaspectratio]{figures/01_localizacao_08.png}
-{\par\scriptsize Sálvora: posições medidas e ampliação perto do GW1. López Escobar et al.\par}
-\begin{itemize}\footnotesize
-\item 1.210 transmissões, sete dispositivos móveis e três gateways.
-\item 114 dos 226 pacotes de teste estão a menos de 300 m do GW1.
+\begin{frame}{O resultado agregado é só o começo}{Notebook 01 — avaliação de Antwerp}
+\coursefigure{01_localizacao_05.png}{Curvas do teste temporal do tutorial; não são um benchmark dos artigos.}
+\begin{itemize}
+\item Conferir a concentração espacial e os erros por condição de recepção.
+\item Muitos pacotes próximos não são muitas situações independentes.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Pausa}{5 min}
-\begin{itemize}\setlength{\itemsep}{.7em}
-\item Salvar o notebook e conferir as saídas.
-\item A próxima prática é independente.
+\begin{frame}{Sálvora: olhar o mapa muda a interpretação}{Notebook 01 — seção 6}
+\coursefigure{01_localizacao_08.png}{Posições das transmissões e gateways. Dados: López Escobar et al.}
+\begin{itemize}
+\item Sete dispositivos móveis: cada ponto é uma medição, não um nó fixo.
+\item 114 dos 226 pacotes de teste ficam a menos de 300 m do GW1.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Sálvora: onde cada método erra?}{Um diagnóstico posterior, sem trocar o teste}
+\coursefigure{01_localizacao_10.png}{Mesmo teste, separado pela proximidade real ao GW1. O corte de 300 m é descritivo.}
+\begin{itemize}
+\item O centroide é favorecido perto do GW1; a conclusão muda longe dele.
+\item Esses erros não devem ser comparados aos de Antwerp como um ranking.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Pausa técnica}{5 minutos — início no minuto 70}
+\begin{itemize}
+\item Salvar a cópia do notebook.
+\item Conferir as saídas já salvas se alguma célula ficou para trás.
+\item A segunda prática é independente da primeira.
 \end{itemize}
 \end{frame}
 
 \section{Forecasting}
+\begin{frame}{Agora, o que ainda não chegou?}{Notebook 02 — seções 0 a 2}
+\coursefigure{02_forecasting_01.png}{Histórico do enlace. Dados: Goldoni et al.; exploração restrita ao histórico de treino.}
+\textbf{Situação:} após fechar uma hora de observações, estimar o RSSI médio da próxima.\\
+Se a série varia lentamente, repetir o último valor já pode funcionar.
+\end{frame}
 
-\begin{frame}{Previsão de RSSI}{Notebook 02 \textperiodcentered{} 40 min}
-\begin{itemize}\setlength{\itemsep}{.7em}
-\item Após fechar a hora t, estimar o RSSI médio de t+1.
-\item Um enlace, 1.059 horas contínuas.
-\item Ler a série antes de construir as entradas.
+\begin{frame}{Uma série também vira uma tabela supervisionada}{Notebook 02 — seção 3; exemplo fictício}
+\centering
+\begin{tabular}{c r r r}
+\toprule
+Hora-alvo & RSSI anterior & RSSI de duas horas atrás & Resposta\\
+\midrule
+10 h & $-82$ & $-80$ & $-81$\\
+11 h & $-81$ & $-82$ & ainda desconhecida\\
+\bottomrule
+\end{tabular}
+\vspace{4mm}
+\[
+X(u)=[y(u-1),y(u-2),y(u-3),y(u-6),y(u-24)]
+\qquad\longrightarrow\qquad y(u)
+\]
+\begin{itemize}
+\item Cada \emph{lag} é uma observação passada.
+\item O target é um número futuro: regressão com dependência temporal.
+\item Não fornecer o RSSI da hora-alvo como entrada.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Do histórico à tabela}{Notebook 02 \textperiodcentered{} lags}
-\begin{itemize}\setlength{\itemsep}{.7em}
-\item Entradas: RSSI de 1, 2, 3, 6 e 24 horas atrás.
-\item Treino no passado; teste no futuro.
-\item Persistência repete o último valor; Ridge combina os lags.
+\begin{frame}{Respeitar a ordem dos acontecimentos}{Notebook 02 — seção 4}
+\centering
+\begin{tikzpicture}
+\node[box,text width=4cm] (tr) at (0,0) {828 exemplos de treino\\aprender modelo e escala};
+\node[box,text width=4cm] (te) at (6,0) {207 exemplos de teste\\aplicar sem reajustar};
+\draw[arrow] (tr)--node[above]{tempo}(te);
+\end{tikzpicture}
+\vspace{4mm}
+\begin{itemize}
+\item 1.059 horas contínuas; 24 horas iniciais formam o histórico dos lags.
+\item Formar lags com passado é diferente de ajustar um scaler com todos os dados.
+\item Testar no futuro simula a direção em que a previsão será usada.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Avaliação temporal}{Notebook 02 \textperiodcentered{} resultados}
-\centering\includegraphics[width=.92\textwidth,height=.54\textheight,keepaspectratio]{figures/02_forecasting_06.png}
-{\par\scriptsize Previsões de uma hora à frente. Dados: Goldoni et al.\par}
-\begin{itemize}\footnotesize
-\item MAE e RMSE em dB; valores de RSSI em dBm.
-\item Uma hora à frente por vez, com o modelo fixo.
-\item Observar os erros nos eventos, não apenas a média.
+\begin{frame}{O que o modelo precisa superar?}{Notebook 02 — seção 5}
+\begin{columns}[T]
+\column{.46\textwidth}
+\begin{block}{Persistência}
+\[
+\widehat y(u)=y(u-1)
+\]
+Repete o último valor disponível.\\[2mm]
+Sem treinamento; uma referência natural para uma série pouco variável.
+\end{block}
+\column{.50\textwidth}
+\begin{block}{Regressão Ridge}
+\[
+\widehat y(u)=b+\sum_j w_j\,y(u-k_j)
+\]
+Aprende uma combinação dos lags, com penalização dos coeficientes.\\[2mm]
+Pesos e escala vêm apenas do treino.
+\end{block}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Uma hora à frente, repetidamente}{O teste não é uma previsão única de 207 horas}
+\centering
+\begin{tikzpicture}
+\node[box,text width=2.4cm] (a) at (0,0) {Fechar hora $t$\\observar $y(t)$};
+\node[box,text width=2.4cm] (b) at (3.5,0) {Prever\\$y(t+1)$};
+\node[box,text width=2.4cm] (c) at (7,0) {Fechar $t+1$\\receber valor real};
+\node[box,text width=2.4cm] (d) at (10.5,0) {Prever\\$y(t+2)$};
+\draw[arrow] (a)--(b); \draw[arrow] (b)--(c); \draw[arrow] (c)--(d);
+\end{tikzpicture}
+\vspace{5mm}
+\begin{itemize}
+\item Uma observação de teste pode virar histórico \textbf{depois} que chega.
+\item O modelo permanece fixo; não fazemos novo treinamento a cada hora.
+\item A média de uma hora só está disponível após o fechamento da janela.
 \end{itemize}
 \end{frame}
 
-\section{Avaliação}
-
-\begin{frame}{Erros de metodologia}{Discussão \textperiodcentered{} 20 min}
-\begin{itemize}\setlength{\itemsep}{.7em}
-\item Normalizar com treino e teste contamina a avaliação.
-\item Trocar parâmetros olhando o teste transforma o teste em validação.
-\item Pacotes próximos não equivalem a situações independentes.
+\begin{frame}{A previsão melhora a referência?}{Notebook 02 — seção 6}
+\coursefigure{02_forecasting_06.png}{Teste sequencial de uma hora à frente. Dados: Goldoni et al.}
+\begin{itemize}
+\item RSSI em dBm; MAE e RMSE em dB.
+\item Real $-80$ dBm, previsão $-83$ dBm: erro absoluto de 3 dB.
+\item Olhar os picos de erro, não só a média.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Métrica e utilidade}{Discussão}
-\begin{itemize}\setlength{\itemsep}{.7em}
-\item Erro pequeno em locais frequentes pode esconder falhas em outras regiões.
-\item RSSI das recepções não mede taxa de entrega de pacotes.
-\item Antes de usar na rede: considerar tolerância, cobertura e custo dos erros.
+\begin{frame}{O que mudou entre as duas práticas?}{Fechar o notebook 02 — seção 7}
+\small
+\begin{tabular}{p{2.8cm}p{4.8cm}p{4.4cm}}
+\toprule
+ & Localização & Forecasting\\
+\midrule
+Uma linha & Um pacote, vários gateways & Uma hora-alvo, vários lags\\[2mm]
+Resposta & Posição do transmissor & RSSI da próxima hora\\[2mm]
+Referência & Centroide; constante como controle & Persistência\\[2mm]
+Métrica & Distância em metros & Erro em dB\\[2mm]
+Limite & Não provamos generalização espacial & Não demonstramos previsão de falha\\
+\bottomrule
+\end{tabular}
+\end{frame}
+
+\section{Discussão}
+\begin{frame}{Em qual caso há vazamento?}{20 minutos — discutir o instante e a separação}
+\begin{enumerate}
+\item Localizar após receber, usando SNR daquele pacote.
+\item Prever o RSSI de amanhã usando a temperatura \emph{observada} amanhã.
+\item Ajustar o scaler com treino e teste juntos.
+\item Usar o RSSI recebido às 10 h para prever às 11 h.
+\end{enumerate}
+\vspace{4mm}
+Antes de responder: \textbf{essa informação estaria disponível quando a decisão fosse tomada?}
+\end{frame}
+
+\begin{frame}{As respostas dependem do contrato}{Retomar os quatro casos}
+\begin{itemize}
+\item \textbf{1 e 4:} informações já disponíveis, conforme o instante definido.
+\item \textbf{2:} usa futuro observado; uma previsão meteorológica emitida antes seria outra informação.
+\item \textbf{3:} o teste participa do ajuste da transformação.
+\end{itemize}
+\begin{block}{Outro cuidado}
+Escolher filtros, parâmetros ou a semente repetidamente pelo resultado de teste
+faz o teste participar do desenvolvimento.
+\end{block}
+\end{frame}
+
+\begin{frame}{Uma boa métrica não encerra a análise}{O que faltaria para uma aplicação real?}
+\begin{itemize}
+\item \textbf{Representatividade:} quais lugares, dispositivos e períodos ficaram de fora?
+\item \textbf{Generalização:} treino bom e teste ruim podem indicar overfitting ou mudança de condições.
+\item \textbf{Utilidade:} qual erro é tolerável? Quanto custa uma decisão errada?
+\item \textbf{Observabilidade:} só vemos recepções; não inferimos PDR sem as transmissões perdidas.
 \end{itemize}
 \end{frame}
 
 \section{Síntese}
-
-\begin{frame}{Aplicação a outros problemas}{Síntese \textperiodcentered{} 15 min}
-\begin{itemize}\setlength{\itemsep}{.7em}
-\item Escolher uma telemetria, a resposta desejada e o instante da decisão.
-\item Definir referência, divisão dos dados e métrica.
-\item Exemplos: latência, throughput e qualidade de enlace.
-\end{itemize}
+\begin{frame}{Aplicar o método a outra telemetria}{15 minutos — síntese e perguntas}
+\begin{block}{Exercício de fechamento}
+Quero estimar \rule{2cm}{.3pt} no instante \rule{2cm}{.3pt}.\\[3mm]
+Já conheço \rule{3cm}{.3pt}. Vou reservar \rule{3cm}{.3pt} para teste.\\[3mm]
+Minha referência será \rule{2cm}{.3pt} e o erro será medido em \rule{2cm}{.3pt}.
+\end{block}
+Sugestões: latência, throughput, ocupação de canal ou qualidade de enlace.\\[3mm]
+Antes de escolher o algoritmo, justificar \textbf{dados, instante e avaliação}.
 \end{frame}
 
 \begin{frame}{Referências e materiais}{ERRC 2026}
-\begin{itemize}\setlength{\itemsep}{.7em}
-\item Aernouts et al. Data, 2018. doi:10.3390/data3020013.
-\item Goldoni et al. Computer Networks, 2022. doi:10.1016/j.comnet.2021.108627.
-\item López Escobar et al. Zenodo, 2024. doi:10.5281/zenodo.13835721.
-\item Notebooks e fontes: github.com/LorenzoDonatti/ML\_meets\_networks\_ERRC2026.
+\footnotesize
+\begin{itemize}
+\item Aernouts et al. \emph{Sigfox and LoRaWAN Datasets for Fingerprint Localization in Large Urban and Rural Areas}. Data, 2018. \url{https://doi.org/10.3390/data3020013}
+\item Goldoni et al. \emph{Correlation between weather and signal strength in LoRaWAN networks: An extensive dataset}. Computer Networks, 2022. \url{https://doi.org/10.1016/j.comnet.2021.108627}
+\item López Escobar et al. \emph{LoRa signal quality and GPS positioning time series dataset}, 2024. \url{https://doi.org/10.5281/zenodo.13835721}
+\item Notebooks, dados preparados e fontes LaTeX:\\
+\url{https://github.com/LorenzoDonatti/ML_meets_networks_ERRC2026}
 \end{itemize}
 \end{frame}
+
 \end{document}

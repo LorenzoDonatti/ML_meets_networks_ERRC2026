@@ -3,8 +3,9 @@
 `minicurso.pdf` é a apresentação pronta, em 16:9. `minicurso.tex` é a fonte completa.
 `template.tex` usa o tema **Dresden** e a paleta **LSC** fornecida pelo proponente:
 verde RGB (0,130,137), títulos em faixa colorida e navegação superior por seções.
-Sem logotipos. São 17 slides, com texto reduzido e figuras das aulas.
-Há um roteiro inicial; omitimos sua repetição a cada seção para manter a apresentação enxuta.
+Sem logotipos. São 30 slides que contextualizam localização e forecasting, situam brevemente
+os tipos de aprendizado e alternam diagramas vetoriais TikZ com gráficos reais das aulas.
+A abertura apresenta as duas frentes; não há repetição de roteiro a cada seção.
 Os temas externos Lsc/rounded do exemplo não são necessários: o exemplo principal usa Dresden.
 O cabeçalho de autoria/licença do arquivo de cores foi preservado em `beamercolorthemelsc.sty`.
 
@@ -19,6 +20,10 @@ Dependências TeX Live: latex-base, latex-recommended (Beamer), pictures (PGF), 
 e fontes Latin Modern. Para o Overleaf, envie `minicurso.tex`, `beamercolorthemelsc.sty` e `figures/`.
 O template usa fontes padrão e não depende de estilos externos baixados em tempo de compilação.
 
-No workspace de desenvolvimento, `scripts/build_slides.py` gera a fonte a partir do roteiro
-e deste template, compila duas vezes e verifica overflow e caracteres ausentes.
+`conteudo.tex` contém o roteiro editável e os diagramas. `template.tex` define o estilo.
+No workspace de desenvolvimento, `scripts/build_slides.py` combina os dois, copia os gráficos
+das execuções dos notebooks, compila duas vezes e verifica overflow e caracteres ausentes.
 Na publicação GitHub basta editar/compilar `minicurso.tex`; scripts internos não são necessários.
+
+Os slides das práticas substituem explicações dos notebooks: não aumentam os 150 minutos.
+Exemplos fictícios, esquemas qualitativos e gráficos dos datasets são identificados separadamente.

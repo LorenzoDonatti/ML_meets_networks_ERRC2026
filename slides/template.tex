@@ -5,6 +5,16 @@
 \usepackage{amsmath,amssymb}
 \usepackage{lmodern}
 \usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{booktabs}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\tikzset{
+  box/.style={draw=lscgreen,fill=lscgreen!7,rounded corners=2pt,align=center,
+    text width=2.8cm,minimum height=1cm,font=\small,
+    execute at begin node={\hyphenpenalty=10000\exhyphenpenalty=10000}},
+  arrow/.style={-{Stealth[length=2mm]},thick,color=lscgreen},
+  note/.style={align=center,font=\footnotesize,text width=3cm}
+}
 \mode<presentation>{
   \usetheme{Dresden}
   \usecolortheme{lsc}
@@ -14,6 +24,9 @@
 \setbeamertemplate{navigation symbols}{}
 \setbeamersize{text margin left=9mm,text margin right=9mm}
 \logo{}
+\newcommand{\coursefigure}[2]{%
+  \centering\includegraphics[width=.94\textwidth,height=.53\textheight,keepaspectratio]{figures/#1}%
+  \par{\scriptsize #2\par}\vspace{1mm}}
 \title[ML Meets Networks]{Machine Learning Meets Networks}
 \subtitle{Guia prático para aplicações de aprendizado de máquina em redes sem fio e IoT}
 \author[Donatti \& Fagundes]{Lorenzo Moreira Donatti\\Deivis Felipe Guerreiro Fagundes}
