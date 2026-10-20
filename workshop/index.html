@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ML meets Networks · Workshop</title>
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
 <style>
 :root{
   --bg:#0a1020;--panel:#0f1830;--panel2:#16223f;--line:#22325a;--grid:#152240;
@@ -164,7 +165,7 @@ details.reveal p{margin-top:6px}
 .ex-line i.g{background:var(--accent)}
 .ex-line i.e{background:var(--pkt);border-radius:2px;transform:translateX(-50%) rotate(45deg)}
 .ex-line span{position:absolute;top:36px;transform:translateX(-50%);font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap}
-.ex-line span.ev{top:-6px;color:var(--pkt);font-weight:700}
+.ex-line span.l{transform:none}.ex-line span.r{transform:translateX(-100%)}.ex-line span.ev{top:-6px;color:var(--pkt);font-weight:700}
 .errline{position:relative;height:80px;margin:34px 140px 6px}
 .errline::before{content:"";position:absolute;left:12px;right:12px;top:30px;height:2px;background:var(--text)}
 .errline i{position:absolute;top:21px;width:20px;height:20px}
@@ -177,6 +178,19 @@ details.reveal p{margin-top:6px}
 .branches{display:flex;gap:44px;margin-top:16px}
 .branches>div{display:flex;flex-direction:column;align-items:center;gap:6px}
 .branches span{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+
+/* fórmulas (KaTeX) */
+.katex{font-size:1.1em}
+.tex.d{display:block;text-align:center}
+.katex-display{margin:4px 0}
+.formula .katex{font-size:1em}
+.blk .tex.d{font-size:18px;margin-top:6px}
+.notation td{vertical-align:middle}
+.notation td:first-child .katex{font-size:1.25em}
+.tl{display:flex;flex-direction:column;gap:7px;margin-top:10px}
+.tl div{display:grid;grid-template-columns:54px 1fr;gap:12px;align-items:center;font-size:16.5px}
+.tl b{font-family:var(--mono);color:var(--accent);text-align:right;font-size:15px}
+.tl b::after{content:" min";font-size:11px;color:var(--muted);font-weight:400}
 </style>
 </head>
 <body>
@@ -363,7 +377,7 @@ details.reveal p{margin-top:6px}
       </div>
       <canvas id="c-lin"></canvas>
       <div class="panel side big">
-        <p>O centroide da aula 01 usa exatamente essa conversão: peso <span class="mono">10<sup>(RSSI − RSSI<sub>máx</sub>)/10</sup></span>.</p>
+        <p>O centroide da aula 01 usa exatamente essa conversão: peso <span class="tex">10^{(\text{RSSI}-\text{RSSI}_{\max})/10}</span>.</p>
         <p class="note" style="margin-top:8px">RSSI não é régua de distância: obstáculos, antenas e propagação mudam o valor. Também não é taxa de entrega.</p>
       </div>
     </div>
@@ -398,7 +412,7 @@ details.reveal p{margin-top:6px}
     </div>
     <div class="panel side">
       <div class="controls"><span class="label">SF</span><span class="seg" id="hear-sf"></span></div>
-      <div class="controls"><button class="b" id="hear-tx">transmitir</button><button class="b" id="hear-auto">automático</button><button class="b" id="hear-noise">variação (σ = 4 dB)</button></div>
+      <div class="controls"><button class="b" id="hear-tx">transmitir</button><button class="b" id="hear-auto">automático</button><button class="b" id="hear-noise">variação aleatória (±4 dB)</button></div>
       <div id="hear-rows" style="display:flex;flex-direction:column;gap:7px;margin-top:4px"></div>
       <div class="label" style="margin-top:4px">fingerprint deste pacote</div>
       <div class="vec" id="hear-vec"></div>
@@ -451,7 +465,7 @@ details.reveal p{margin-top:6px}
   <div class="body">
     <div class="col">
       <canvas id="c-table"></canvas>
-      <div class="controls"><button class="b" id="tab-play">coletando</button><button class="b" id="tab-model">visão do modelo (∅ → −140)</button></div>
+      <div class="controls"><button class="b" id="tab-play">coletando</button><button class="b" id="tab-model">visão do modelo (NaN → −140)</button></div>
     </div>
     <div class="panel side">
       <table class="t" id="tab-t"></table>
@@ -478,7 +492,37 @@ details.reveal p{margin-top:6px}
   <div class="blk" style="margin-top:22px"><h4>no teste</h4><p>Guardamos o GPS real para <b>conferir o erro</b>, não para produzir a estimativa. GPS, horário, ID do dispositivo e nome da partição ficam fora de X.</p></div>
 </section>
 
-<!-- 18 · s-antwerp -->
+<!-- 18 · s-colab1 -->
+<section class="slide" id="s-colab1" data-sec="Localização">
+  <div class="kicker">prática 1 · 40 minutos</div>
+  <h2>Mão na massa: notebook 01 no Colab</h2>
+  <div class="cols" style="margin-top:18px;grid-template-columns:1.15fr 1fr">
+    <div>
+      <ol class="ul" style="margin-top:0">
+        <li>Abra o link e conecte um ambiente <b>CPU padrão</b>; não precisa de GPU.</li>
+        <li>Para guardar alterações: <b>Arquivo → Salvar uma cópia no Drive</b>.</li>
+        <li>Execute as células em ordem com <b>Shift + Enter</b>. O código já está pronto.</li>
+        <li>Os dados descem sozinhos do GitHub: precisa de <b>internet</b>, mas não de upload nem de montar o Drive.</li>
+      </ol>
+      <div class="blk" style="margin-top:14px"><h4>link do notebook</h4><p class="mono" style="font-size:14px">colab.research.google.com/github/LorenzoDonatti/<br>ML_meets_networks_ERRC2026/blob/errc2026-v1.2/<br>notebooks/01_localizacao.ipynb</p><p class="note" style="margin-top:6px">Ou pelo botão "Abrir no Colab" no README do repositório.</p></div>
+    </div>
+    <div>
+      <div class="label">roteiro dos 40 minutos</div>
+      <div class="tl">
+        <div><b>2</b><span>Preparar o ambiente e baixar os dados</span></div>
+        <div><b>3</b><span>O que estamos tentando localizar?</span></div>
+        <div><b>13</b><span>Conhecer a coleta: presença, mapa, sinais, calendário</span></div>
+        <div><b>4</b><span>O contrato da avaliação: treino, validação, teste</span></div>
+        <div><b>5</b><span>Três estratégias: centroide, k-NN, Random Forest</span></div>
+        <div><b>8</b><span>Avaliar e interpretar: mediana, P90, recortes</span></div>
+        <div><b>5</b><span>Sálvora: quando a mediana engana</span></div>
+      </div>
+      <div class="blk ask" style="margin-top:12px"><h4>se algo falhar</h4><p>Gráficos e tabelas já estão salvos no notebook: dá para acompanhar lendo, mesmo sem executar.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 19 · s-antwerp -->
 <section class="slide" id="s-antwerp" data-sec="Localização">
   <div class="kicker">notebook 01 · seções 0 a 2</div>
   <h2>Antwerp: investigar a coleta antes de treinar</h2>
@@ -490,7 +534,23 @@ details.reveal p{margin-top:6px}
   </div>
 </section>
 
-<!-- 19 · s-strat -->
+<!-- 20 · s-notation -->
+<section class="slide" id="s-notation" data-sec="Localização">
+  <div class="kicker">antes das fórmulas</div>
+  <h2>Como ler as fórmulas desta aula</h2>
+  <p class="lead">São poucas ideias, repetidas em todas as fórmulas. Se travar em alguma, volte a este slide.</p>
+  <table class="t lg notation" style="margin-top:12px">
+    <tr><th style="width:230px">Símbolo</th><th style="width:190px">Lê-se</th><th>Quer dizer</th></tr>
+    <tr><td><span class="tex">\mathbf p=(x,\,y)</span></td><td>"p em negrito"</td><td>Uma <b>posição</b> com duas coordenadas, em metros. Negrito = vários números juntos (vetor).</td></tr>
+    <tr><td><span class="tex">\widehat{\mathbf p},\ \ \widehat y</span></td><td>"p chapéu", "y chapéu"</td><td>O chapéu marca uma <b>estimativa</b>: o que o modelo calcula, não o valor real.</td></tr>
+    <tr><td><span class="tex">r_g,\ \ \mathbf p_i,\ \ w_j</span></td><td>"r índice g"</td><td>O índice diz <b>de quem</b> é o valor: <i>g</i> = gateway, <i>i</i> = exemplo de treino, <i>j</i> = lag.</td></tr>
+    <tr><td><span class="tex">\sum_{g} a_g</span></td><td>"somatório"</td><td><b>Somar</b> todos os <span class="tex">a_g</span>. Funciona como um laço <span class="mono">for</span> que acumula.</td></tr>
+    <tr><td><span class="tex">\dfrac{\sum_g a_g\,\mathbf p_g}{\sum_g a_g}</span></td><td>"média ponderada"</td><td>Soma de valor × peso, dividida pela soma dos pesos. Quem tem peso maior puxa o resultado para perto de si.</td></tr>
+    <tr><td><span class="tex">|\,y-\widehat y\,|,\ \ \sqrt{\ \cdot\ }</span></td><td>"módulo", "raiz"</td><td>Tamanho do erro sem o sinal; raiz quadrada.</td></tr>
+  </table>
+</section>
+
+<!-- 21 · s-strat -->
 <section class="slide" id="s-strat" data-sec="Localização">
   <div class="kicker">notebook 01 · seção 4 · visão geral</div>
   <h2>Três estratégias para o mesmo problema</h2>
@@ -501,12 +561,12 @@ details.reveal p{margin-top:6px}
     <tr><td><b>Random Forest</b></td><td>Combina regras aprendidas por várias árvores</td><td>Fingerprints rotulados com GPS</td></tr>
   </table>
   <div class="cols" style="margin-top:16px">
-    <div class="blk"><h4>controle sem sinais</h4><p>A posição mediana do treino:</p><div class="formula sm">p̂<sub>controle</sub> = ( mediana(x<sub>i</sub>), mediana(y<sub>i</sub>) )<sub>treino</sub></div><p class="note" style="margin-top:6px">Não é um sistema de localização: é o piso que qualquer método precisa superar.</p></div>
+    <div class="blk"><h4>controle sem sinais</h4><div class="formula sm"><span class="tex d">\widehat{\mathbf p}_{\text{controle}}=\bigl(\operatorname{mediana}(x_i),\ \operatorname{mediana}(y_i)\bigr)_{\text{treino}}</span></div><p style="margin-top:8px">Em palavras: ignorar os sinais e responder sempre o "meio" das posições de treino. É o piso que qualquer método precisa superar.</p></div>
     <div class="blk limit"><h4>ausência = −140</h4><p>Para k-NN e RF, gateway ausente recebe o código fixo −140: abaixo das potências do arquivo, <b>não uma medição física</b> nem um limiar universal de sensibilidade. É uma escolha de representação.</p></div>
   </div>
 </section>
 
-<!-- 20 · s-split -->
+<!-- 22 · s-split -->
 <section class="slide" id="s-split" data-sec="Localização">
   <div class="kicker">notebook 01 · seção 3 · antes de treinar</div>
   <h2>Que generalização estamos avaliando?</h2>
@@ -523,26 +583,30 @@ details.reveal p{margin-top:6px}
   </ul>
 </section>
 
-<!-- 21 · s-cent-math -->
+<!-- 23 · s-cent-math -->
 <section class="slide" id="s-cent-math" data-sec="Localização">
   <div class="kicker">referência geométrica, sem treinamento</div>
   <h2>Centroide: uma média das posições dos gateways</h2>
-  <p class="lead">Para cada gateway que recebeu: r<sub>g</sub> é o RSSI em dBm e <b>p</b><sub>g</sub> = (x<sub>g</sub>, y<sub>g</sub>) é sua posição em metros. r<sub>máx</sub> é o maior RSSI recebido.</p>
-  <div class="formula">a<sub>g</sub> = 10<sup>(r<sub>g</sub> − r<sub>máx</sub>)/10</sup> &emsp;&emsp; <b>p̂</b> = <span class="frac"><span>Σ<sub>g</sub> a<sub>g</sub> <b>p</b><sub>g</sub></span><span>Σ<sub>g</sub> a<sub>g</sub></span></span></div>
+  <div class="formula" style="margin-top:14px"><span class="tex d">a_g=10^{(r_g-r_{\max})/10},\qquad \underbrace{\widehat{\mathbf p}=\frac{\sum_g a_g\,\mathbf p_g}{\sum_g a_g}}_{\text{média das posições, ponderada pela potência relativa}}</span></div>
   <div class="cols" style="margin-top:14px">
-    <div class="blk"><h4>passo a passo</h4><ol class="ul sm" style="margin-top:4px"><li>Converter cada RSSI em potência <b>relativa ao mais forte</b> (o mais forte vale 1).</li><li>Cada 10 dB abaixo divide o peso por 10.</li><li>Fazer a média das posições dos gateways com esses pesos.</li></ol></div>
-    <div class="blk ask"><h4>exemplo fictício</h4>
-      <div class="ex-line"><span class="ev" style="left:9.09%">x̂ = 10 m</span><i class="g" style="left:0%"></i><i class="g" style="left:100%"></i><i class="e" style="left:9.09%"></i><span style="left:0%">A · 0 m</span><span style="left:100%">B · 110 m</span></div>
-      <p>A: −80 dBm → a = 1 · B: −90 dBm → a = 0,1<br>x̂ = (1·0 + 0,1·110) / 1,1 = <b>10 m</b>. A pesa dez vezes mais que B.</p></div>
+    <div class="blk"><h4>em palavras</h4><ul class="ul sm" style="margin-top:2px">
+      <li><span class="tex">r_g</span>: RSSI (dBm) que o gateway <i>g</i> mediu; <span class="tex">r_{\max}</span> é o maior deles.</li>
+      <li><span class="tex">a_g</span>: peso do gateway. O mais forte vale 1; cada 10 dB abaixo divide o peso por 10.</li>
+      <li><span class="tex">\mathbf p_g</span>: posição conhecida do gateway, em metros.</li>
+      <li><span class="tex">\widehat{\mathbf p}</span>: posição estimada do dispositivo.</li></ul></div>
+    <div class="blk ask"><h4>exemplo fictício · dois gateways numa linha</h4>
+      <div class="ex-line"><span class="ev" style="left:9.09%">x̂ = 10 m</span><i class="g" style="left:0%"></i><i class="g" style="left:100%"></i><i class="e" style="left:9.09%"></i><span class="l" style="left:0%">A: −80 dBm · 0 m</span><span class="r" style="left:100%">B: −90 dBm · 110 m</span></div>
+      <div class="tex d" style="margin-top:22px">a_A=10^{0/10}=1,\qquad a_B=10^{-10/10}=0{,}1</div>
+      <div class="tex d">\widehat x=\frac{1\cdot 0+0{,}1\cdot 110}{1+0{,}1}=10\ \text{m}</div></div>
   </div>
-  <div class="blk limit" style="margin-top:12px"><h4>limite</h4><p>Não é trilateração nem conversão de RSSI em distância. Gateway ausente tem peso zero; com um único receptor, retorna a posição dele.</p></div>
+  <div class="blk limit" style="margin-top:12px"><h4>limite</h4><p>Não é trilateração nem conversão de RSSI em distância. Gateway ausente tem peso zero; com um único receptor, devolve a posição dele.</p></div>
 </section>
 
-<!-- 22 · s-cent -->
+<!-- 24 · s-cent -->
 <section class="slide" id="s-cent" data-sec="Localização">
   <div class="kicker">aula 01 · referência geométrica</div>
   <h2>Centroide ponderado</h2>
-  <p class="lead">Média das posições dos gateways que ouviram, com peso <span class="mono">a<sub>g</sub> = 10<sup>(r<sub>g</sub> − r<sub>máx</sub>)/10</sup></span>. Arraste o dispositivo.</p>
+  <p class="lead">Média das posições dos gateways que ouviram, com peso <span class="tex">a_g=10^{(r_g-r_{\max})/10}</span>. Arraste o dispositivo.</p>
   <div class="body">
     <div class="col">
       <canvas id="c-cent"></canvas>
@@ -556,24 +620,29 @@ details.reveal p{margin-top:6px}
   </div>
 </section>
 
-<!-- 23 · s-knn-math -->
+<!-- 25 · s-knn-math -->
 <section class="slide" id="s-knn-math" data-sec="Localização">
   <div class="kicker">cinco vizinhos no espaço dos fingerprints, não no mapa</div>
   <h2>k-NN: encontrar sinais parecidos</h2>
-  <p class="lead"><b>r</b>: novo vetor de RSSI · <b>r</b><sub>i</sub>: vetor de um exemplo de treino · <b>p</b><sub>i</sub>: posição conhecida daquele exemplo · G: número de gateways · N<sub>5</sub>: os cinco menores d<sub>i</sub>.</p>
-  <div class="formula">d<sub>i</sub> = √( Σ<sub>g=1</sub><sup>G</sup> (r<sub>g</sub> − r<sub>ig</sub>)² ) &emsp;&emsp; <b>p̂</b> = <span class="frac"><span>Σ<sub>i∈N<sub>5</sub></sub> (1/d<sub>i</sub>) <b>p</b><sub>i</sub></span><span>Σ<sub>i∈N<sub>5</sub></sub> (1/d<sub>i</sub>)</span></span></div>
-  <div class="flow">
-    <div class="node">Novo fingerprint</div><div class="arr"></div>
-    <div class="node hl">Buscar 5 exemplos<small>mais semelhantes</small></div><div class="arr"></div>
-    <div class="node">Combinar suas<small>posições de treino</small></div>
+  <div class="formula" style="margin-top:14px"><span class="tex d">d_i=\sqrt{\sum_{g=1}^{G}\bigl(r_g-r_{ig}\bigr)^2},\qquad \widehat{\mathbf p}=\frac{\sum_{i\in N_5}(1/d_i)\,\mathbf p_i}{\sum_{i\in N_5}(1/d_i)}</span></div>
+  <div class="cols" style="margin-top:14px">
+    <div class="blk"><h4>em palavras</h4><ul class="ul sm" style="margin-top:2px">
+      <li><span class="tex">d_i</span>: quão <b>diferente</b> o novo fingerprint é do exemplo <i>i</i> do treino, em dB. É a distância de Pitágoras com G eixos, um por gateway.</li>
+      <li><span class="tex">N_5</span>: os 5 exemplos com menor <span class="tex">d_i</span>.</li>
+      <li><span class="tex">1/d_i</span>: o peso. Mais parecido, mais peso.</li>
+      <li><span class="tex">\widehat{\mathbf p}</span>: média ponderada das posições desses vizinhos.</li></ul></div>
+    <div class="blk ask"><h4>exemplo fictício · 2 gateways, k = 2</h4>
+      <p>Novo pacote: <span class="tex">\mathbf r=(-90,\,-100)</span></p>
+      <table class="t" style="margin:6px 0;font-size:13.5px"><tr><th>vizinho</th><th>RSSI no treino</th><th>d</th><th>posição</th></tr>
+        <tr><td>A</td><td>(−92, −101)</td><td>√5 ≈ 2,2</td><td>x = 100 m</td></tr>
+        <tr><td>B</td><td>(−95, −100)</td><td>√25 = 5</td><td>x = 300 m</td></tr></table>
+      <div class="tex d">\widehat x=\frac{100/2{,}2+300/5}{1/2{,}2+1/5}\approx 162\ \text{m}</div>
+      <p class="note">A é mais parecido, então a estimativa fica mais perto dele.</p></div>
   </div>
-  <div class="cols">
-    <div class="blk"><h4>intuição</h4><p>Distância de sinais 2 recebe o <b>dobro</b> do peso da distância 4. Se houver distância zero, a implementação faz a média só dos vizinhos coincidentes.</p></div>
-    <div class="blk limit"><h4>cuidado</h4><p>O código −140 também entra em d<sub>i</sub>. Fingerprints semelhantes <b>não garantem</b> posições próximas. São duas distâncias: entre sinais (para buscar) e entre posições (para medir o erro).</p></div>
-  </div>
+  <div class="blk limit" style="margin-top:12px"><h4>cuidado</h4><p>O código −140 também entra em <span class="tex">d_i</span>. Sinais parecidos <b>não garantem</b> posições próximas: busca-se pela distância entre sinais, e o erro se mede pela distância entre posições.</p></div>
 </section>
 
-<!-- 24 · s-knn -->
+<!-- 26 · s-knn -->
 <section class="slide" id="s-knn" data-sec="Localização">
   <div class="kicker">aula 01 · aprendizado por exemplos</div>
   <h2>k-NN: vizinhos no espaço dos sinais, não no mapa</h2>
@@ -585,31 +654,30 @@ details.reveal p{margin-top:6px}
   </div>
 </section>
 
-<!-- 25 · s-rf-math -->
+<!-- 27 · s-rf-math -->
 <section class="slide" id="s-rf-math" data-sec="Localização">
   <div class="kicker">cada árvore aprende divisões a partir dos sinais</div>
   <h2>Random Forest: combinar árvores de regressão</h2>
-  <div class="cols" style="margin-top:18px;align-items:center">
+  <div class="cols" style="margin-top:14px;align-items:center">
     <div class="tree">
       <div class="node hl">RSSI A ≤ −95?</div>
       <div class="branches"><div><span>↙ sim</span><div class="node">Folha L<small>(20, 40) m</small></div></div><div><span>não ↘</span><div class="node">Folha R<small>(90, 60) m</small></div></div></div>
-      <p class="note" style="text-align:center;margin-top:8px">Árvore simplificada; valores fictícios.</p>
+      <p class="note" style="text-align:center;margin-top:8px">Árvore simplificada; valores fictícios. Novo pacote com RSSI A = −100: "−100 ≤ −95? sim" → folha L → (20, 40) m.</p>
     </div>
     <div>
-      <p class="big">Na folha, a árvore devolve a <b>média das posições</b> dos exemplos de treino que chegaram ali:</p>
-      <div class="formula sm">p̂<sub>folha</sub> = <span class="frac"><span>1</span><span>n<sub>folha</sub></span></span> Σ<sub>i∈folha</sub> <b>p</b><sub>i</sub></div>
-      <p class="big" style="margin-top:10px">A floresta faz a média de T árvores (T = 100 no notebook):</p>
-      <div class="formula sm">p̂ = <span class="frac"><span>1</span><span>T</span></span> Σ<sub>t=1</sub><sup>T</sup> p̂<sub>t</sub></div>
+      <div class="label">folha: média das posições de treino que caíram nela</div>
+      <div class="formula sm" style="margin-top:4px"><span class="tex d">\widehat{\mathbf p}_{\text{folha}}=\frac{1}{n_{\text{folha}}}\sum_{i\in\text{folha}}\mathbf p_i</span></div>
+      <div class="label" style="margin-top:10px">floresta: média das T árvores (T = 100 no notebook)</div>
+      <div class="formula sm" style="margin-top:4px"><span class="tex d">\widehat{\mathbf p}=\frac{1}{T}\sum_{t=1}^{T}\widehat{\mathbf p}_t</span></div>
     </div>
   </div>
-  <ul class="ul">
-    <li>Cada árvore usa uma <b>reamostragem</b> do treino (bootstrap).</li>
-    <li>As divisões são escolhidas para <b>reduzir o erro quadrático</b> dentro das folhas.</li>
-    <li>A média reduz a variabilidade, mas <b>não corrige</b> dados pouco representativos.</li>
-  </ul>
+  <div class="cols" style="margin-top:12px">
+    <div class="blk"><h4>em palavras</h4><p style="font-size:16px">Uma árvore é uma sequência de perguntas sim/não sobre os RSSIs. <span class="tex">n_{\text{folha}}</span> é quantos exemplos de treino caíram na folha; <span class="tex">\widehat{\mathbf p}_t</span> é a resposta da árvore <i>t</i>. Cada árvore treina numa reamostragem do treino, e as perguntas são escolhidas para reduzir o erro quadrático.</p></div>
+    <div class="blk ask"><h4>exemplo fictício · 3 árvores</h4><p style="font-size:16px">Respostas (20, 40), (30, 50) e (40, 30) m:</p><div class="tex d">\widehat{\mathbf p}=\tfrac{1}{3}\bigl[(20,40)+(30,50)+(40,30)\bigr]=(30,\,40)\ \text{m}</div><p class="note">A média reduz a variabilidade, mas não corrige dados pouco representativos.</p></div>
+  </div>
 </section>
 
-<!-- 26 · s-rf -->
+<!-- 28 · s-rf -->
 <section class="slide" id="s-rf" data-sec="Localização">
   <div class="kicker">aula 01 · árvores</div>
   <h2>Random Forest: perguntas sobre os sinais</h2>
@@ -621,11 +689,11 @@ details.reveal p{margin-top:6px}
   </div>
 </section>
 
-<!-- 27 · s-err -->
+<!-- 29 · s-err -->
 <section class="slide" id="s-err" data-sec="Localização">
   <div class="kicker">notebook 01 · seção 5</div>
   <h2>Erro em metros: o que significa?</h2>
-  <div class="errline"><i class="real"></i><i class="est"></i><span class="dist">distância geográfica (haversine), em metros</span><span class="l1">GPS real</span><span class="l2">estimativa</span></div>
+  <div class="errline"><i class="real"></i><i class="est"></i><span class="dist">distância sobre a superfície da Terra (haversine), em metros</span><span class="l1">GPS real</span><span class="l2">estimativa</span></div>
   <ul class="ul">
     <li><b>Mediana:</b> metade dos erros é menor ou igual a esse valor.</li>
     <li><b>P90:</b> 90% dos erros ficam até esse valor; não é o erro máximo nem intervalo de confiança.</li>
@@ -634,7 +702,7 @@ details.reveal p{margin-top:6px}
   <div class="blk ask" style="margin-top:16px"><h4>primeiro a validação, depois o teste</h4><p>Os quatro métodos estimam exatamente os mesmos pacotes. A partir do teste, gráficos e recortes são diagnóstico: <b>não</b> vamos mudar k, filtros, semente ou datas e tentar de novo.</p></div>
 </section>
 
-<!-- 28 · s-cdf -->
+<!-- 30 · s-cdf -->
 <section class="slide" id="s-cdf" data-sec="Localização">
   <div class="kicker">aula 01 · avaliação</div>
   <h2>Mediana, P90 e a tolerância da aplicação</h2>
@@ -651,7 +719,7 @@ details.reveal p{margin-top:6px}
   </div>
 </section>
 
-<!-- 29 · s-agg -->
+<!-- 31 · s-agg -->
 <section class="slide" id="s-agg" data-sec="Localização">
   <div class="kicker">notebook 01 · avaliação de Antwerp</div>
   <h2>O resultado agregado é só o começo</h2>
@@ -670,7 +738,7 @@ details.reveal p{margin-top:6px}
   </div>
 </section>
 
-<!-- 30 · s-conc -->
+<!-- 32 · s-conc -->
 <section class="slide" id="s-conc" data-sec="Localização">
   <div class="kicker">aula 01 · antes de comemorar</div>
   <h2>Muitos pacotes no mesmo lugar não são muitas situações</h2>
@@ -695,7 +763,7 @@ details.reveal p{margin-top:6px}
   </div>
 </section>
 
-<!-- 31 · s-sal-map -->
+<!-- 33 · s-sal-map -->
 <section class="slide" id="s-sal-map" data-sec="Localização">
   <div class="kicker">notebook 01 · seção 6</div>
   <h2>Sálvora: olhar o mapa muda a interpretação</h2>
@@ -706,7 +774,7 @@ details.reveal p{margin-top:6px}
   </div>
 </section>
 
-<!-- 32 · s-salvora -->
+<!-- 34 · s-salvora -->
 <section class="slide" id="s-salvora" data-sec="Localização">
   <div class="kicker">aula 01 · contraponto</div>
   <h2>Sálvora: quem "ganha" depende de onde você olha</h2>
@@ -720,7 +788,18 @@ details.reveal p{margin-top:6px}
   </div>
 </section>
 
-<!-- 33 · s-pause -->
+<!-- 35 · s-sal-fig -->
+<section class="slide" id="s-sal-fig" data-sec="Localização">
+  <div class="kicker">notebook 01 · seção 6 · figura do notebook</div>
+  <h2>Sálvora: onde cada método erra?</h2>
+  <div class="figwrap"><img src="../slides/figures/01_localizacao_10.png" alt="Erros de Sálvora, gerais e separados pela distância ao GW1" style="max-height:300px"><span class="cap">Esquerda: erro acumulado de todo o teste. Direita: o mesmo teste separado pela distância real ao GW1. O corte de 300 m é descritivo, feito depois.</span></div>
+  <div class="cols" style="margin-top:12px">
+    <div class="blk"><h4>o que ler</h4><p>O centroide é favorecido perto do GW1. Longe dele, a conclusão muda: a Random Forest passa a errar menos.</p></div>
+    <div class="blk limit"><h4>não é ranking</h4><p>Esses erros não devem ser comparados aos de Antwerp: cenários e protocolos são diferentes.</p></div>
+  </div>
+</section>
+
+<!-- 36 · s-pause -->
 <section class="slide" id="s-pause" data-sec="Localização">
   <div class="kicker">5 minutos · início no minuto 70</div>
   <h2>Pausa técnica</h2>
@@ -731,7 +810,36 @@ details.reveal p{margin-top:6px}
   </ul>
 </section>
 
-<!-- 34 · s-fc-intro -->
+<!-- 37 · s-colab2 -->
+<section class="slide" id="s-colab2" data-sec="Forecasting">
+  <div class="kicker">prática 2 · 40 minutos</div>
+  <h2>Mão na massa: notebook 02 no Colab</h2>
+  <div class="cols" style="margin-top:18px;grid-template-columns:1.15fr 1fr">
+    <div>
+      <ol class="ul" style="margin-top:0">
+        <li>Mesmo procedimento: link, ambiente <b>CPU padrão</b>, <b>Shift + Enter</b>.</li>
+        <li>Este notebook é <b>independente</b> do anterior: não precisa ter terminado a prática 1.</li>
+        <li>Conferência na primeira célula: <b>1.059 linhas e duas colunas</b>, uma hora por linha.</li>
+      </ol>
+      <div class="blk" style="margin-top:14px"><h4>link do notebook</h4><p class="mono" style="font-size:14px">colab.research.google.com/github/LorenzoDonatti/<br>ML_meets_networks_ERRC2026/blob/errc2026-v1.2/<br>notebooks/02_forecasting.ipynb</p></div>
+    </div>
+    <div>
+      <div class="label">roteiro dos 40 minutos</div>
+      <div class="tl">
+        <div><b>2</b><span>Preparar o ambiente</span></div>
+        <div><b>3</b><span>O instante da previsão</span></div>
+        <div><b>13</b><span>Explorar a série: escalas, variações, lags</span></div>
+        <div><b>6</b><span>Do histórico à tabela de treinamento</span></div>
+        <div><b>4</b><span>Divisão temporal</span></div>
+        <div><b>4</b><span>Persistência e regressão Ridge</span></div>
+        <div><b>5</b><span>Avaliação: MAE e RMSE</span></div>
+        <div><b>3</b><span>Aplicações e limites</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 38 · s-fc-intro -->
 <section class="slide" id="s-fc-intro" data-sec="Forecasting">
   <div class="kicker">notebook 02 · seções 0 a 2</div>
   <h2>Agora, o que ainda não chegou?</h2>
@@ -750,7 +858,7 @@ details.reveal p{margin-top:6px}
   </div>
 </section>
 
-<!-- 35 · s-series -->
+<!-- 39 · s-series -->
 <section class="slide" id="s-series" data-sec="Forecasting">
   <div class="kicker">notebook 02 · seção 3 · exemplo fictício</div>
   <h2>Uma série também vira uma tabela supervisionada</h2>
@@ -761,15 +869,16 @@ details.reveal p{margin-top:6px}
     <tr><td>10 h</td><td>−81</td><td>−82</td><td>−80</td></tr>
     <tr class="hl"><td>11 h</td><td class="nan">ainda desconhecido</td><td><b>−81</b></td><td><b>−82</b></td></tr>
   </table>
-  <div class="formula" style="margin-top:14px">X(u) = [ y(u−1), y(u−2), y(u−3), y(u−6), y(u−24) ] &ensp;⟶&ensp; y(u)</div>
-  <div class="cols" style="margin-top:12px">
+  <div class="formula" style="margin-top:14px"><span class="tex d">X(u)=\bigl[\,y(u-1),\ y(u-2),\ y(u-3),\ y(u-6),\ y(u-24)\,\bigr]\ \longrightarrow\ y(u)</span></div>
+  <p class="note" style="text-align:center;margin-top:4px">Em palavras: para prever a hora <i>u</i>, olhamos o RSSI de 1, 2, 3, 6 e 24 horas antes.</p>
+  <div class="cols" style="margin-top:10px">
     <ul class="ul sm" style="margin-top:0"><li>Cada <b>lag</b> é uma observação passada.</li><li>O target é um número futuro: regressão com dependência temporal.</li><li><b>Não</b> fornecer o RSSI da hora-alvo como entrada.</li></ul>
     <div class="blk ask"><h4>faça no papel</h4><p>Qual coluna é y? Qual valor a persistência preveria para 11 h?</p>
       <details class="reveal"><summary>ver resposta</summary><p>y é o RSSI real da hora-alvo. A persistência preveria <b>−81 dBm</b>. As 24 primeiras horas não têm todo o histórico e são descartadas: restam 1.035 exemplos.</p></details></div>
   </div>
 </section>
 
-<!-- 36 · s-lags -->
+<!-- 40 · s-lags -->
 <section class="slide" id="s-lags" data-sec="Forecasting">
   <div class="kicker">aula 02 · montagem da tabela</div>
   <h2>Uma série vira tabela com lags</h2>
@@ -781,7 +890,7 @@ details.reveal p{margin-top:6px}
   </div>
 </section>
 
-<!-- 37 · s-order -->
+<!-- 41 · s-order -->
 <section class="slide" id="s-order" data-sec="Forecasting">
   <div class="kicker">notebook 02 · seção 4</div>
   <h2>Respeitar a ordem dos acontecimentos</h2>
@@ -797,36 +906,36 @@ details.reveal p{margin-top:6px}
   </ul>
 </section>
 
-<!-- 38 · s-pers -->
+<!-- 42 · s-pers -->
 <section class="slide" id="s-pers" data-sec="Forecasting">
   <div class="kicker">notebook 02 · seção 5 · sem treinamento</div>
   <h2>Persistência: o que o modelo precisa superar?</h2>
   <div class="cols" style="margin-top:18px">
-    <div class="blk"><h4>persistência</h4><div class="formula">ŷ(u) = y(u−1)</div><p style="margin-top:10px">Repete o último valor disponível. Sem treinamento; uma referência natural para uma série pouco variável.</p></div>
-    <div class="blk ask"><h4>exemplo fictício</h4><p>Último RSSI horário: −82 dBm. Previsão seguinte: −82 dBm.<br>Se o valor real for −80 dBm:</p><div class="formula">| y(u) − ŷ(u) | = 2 dB</div></div>
+    <div class="blk"><h4>persistência</h4><div class="formula"><span class="tex d">\widehat y(u)=y(u-1)</span></div><p style="margin-top:10px">Em palavras: a previsão para a próxima hora é o valor da hora que acabou de fechar. Sem treinamento.</p></div>
+    <div class="blk ask"><h4>exemplo fictício</h4><p>Último RSSI horário: −82 dBm, então a previsão é −82 dBm. O real foi −80 dBm:</p><div class="formula"><span class="tex d">|\,y(u)-\widehat y(u)\,|=|-80-(-82)|=2\ \text{dB}</span></div></div>
   </div>
-  <p class="big" style="margin-top:16px">y(u) é o RSSI da hora-alvo; o chapéu em ŷ(u) indica uma estimativa. No treino real, a mudança típica entre horas consecutivas é de só <b>0,5 dB</b> (mediana): por isso a persistência é difícil de vencer.</p>
+  <p class="big" style="margin-top:16px">No treino real, a mudança típica entre horas consecutivas é de só <b>0,5 dB</b> (mediana). Por isso a persistência é uma referência difícil de vencer.</p>
   <div class="blk limit" style="margin-top:12px"><h4>limite</h4><p>Repete o passado mais recente: <b>não antecipa</b> uma mudança brusca.</p></div>
 </section>
 
-<!-- 39 · s-ridge -->
+<!-- 43 · s-ridge -->
 <section class="slide" id="s-ridge" data-sec="Forecasting">
   <div class="kicker">combinação linear com penalização dos coeficientes</div>
   <h2>Ridge: aprender quanto cada lag contribui</h2>
-  <p class="lead">Cada lag é padronizado com média μ<sub>j</sub> e desvio σ<sub>j</sub> <b>do treino</b>. k<sub>j</sub> é o atraso (1, 2, 3, 6 ou 24 h), b é o intercepto e w<sub>j</sub> o peso aprendido.</p>
-  <div class="formula">z<sub>j</sub>(u) = <span class="frac"><span>y(u − k<sub>j</sub>) − μ<sub>j</sub></span><span>σ<sub>j</sub></span></span> &emsp;&emsp; ŷ(u) = b + Σ<sub>j=1</sub><sup>5</sup> w<sub>j</sub> z<sub>j</sub>(u)</div>
-  <div class="formula">min<sub>b, w</sub> [ <span class="ub">Σ<sub>u∈treino</sub> (y(u) − ŷ(u))²<em>errar pouco nos exemplos</em></span> + <span class="ub">α Σ<sub>j</sub> w<sub>j</sub>²<em>penalizar pesos muito grandes</em></span> ]</div>
-  <div class="cols" style="margin-top:12px">
-    <div class="blk"><h4>como ler</h4><p>Erro + penalização. No notebook, <b>α = 1 fixo</b>. No treino: StandardScaler.fit → Ridge.fit. No teste: a mesma transformação → predict.</p></div>
-    <div class="blk limit"><h4>não é uma média ponderada</h4><p>Os pesos podem ser negativos e não precisam somar 1. No próximo slide, os pesos reais mudam com α.</p></div>
+  <div class="formula" style="margin-top:12px"><span class="tex d">z_j(u)=\frac{y(u-k_j)-\mu_j}{\sigma_j},\qquad \widehat y(u)=b+\sum_{j=1}^{5}w_j\,z_j(u)</span></div>
+  <div class="formula"><span class="tex d">\min_{b,\,\mathbf w}\Bigl[\ \underbrace{\sum_{u\in\text{treino}}\bigl(y(u)-\widehat y(u)\bigr)^2}_{\text{errar pouco nos exemplos}}\ +\ \underbrace{\alpha\sum_{j=1}^{5}w_j^2}_{\text{penalizar pesos muito grandes}}\ \Bigr]</span></div>
+  <div class="cols3">
+    <div class="blk"><h4>1 · padronizar</h4><p style="font-size:15.5px"><span class="tex">z_j</span> diz quantos desvios o lag está acima ou abaixo da média do <b>treino</b>. <span class="tex">k_j</span> é o atraso (1, 2, 3, 6 ou 24 h). Ex.: lag = −55, <span class="tex">\mu=-56</span>, <span class="tex">\sigma=1</span> → <span class="tex">z=+1</span>.</p></div>
+    <div class="blk"><h4>2 · combinar</h4><p style="font-size:15.5px">Previsão = intercepto <span class="tex">b</span> + soma de peso × z. Pesos reais aprendidos (α = 1):<br><span class="mono" style="font-size:13.5px">lag_1 +0,47 · lag_2 +0,52 · lag_3 −0,08<br>lag_6 +0,17 · lag_24 +0,06</span></p></div>
+    <div class="blk ask"><h4>3 · escolher os pesos</h4><p style="font-size:15.5px">O <span class="tex">\min</span> procura <span class="tex">b</span> e <span class="tex">\mathbf w</span> que errem pouco no treino; <span class="tex">\alpha</span> pune pesos grandes para o modelo não exagerar. Não é média ponderada: há peso negativo.</p></div>
   </div>
 </section>
 
-<!-- 40 · s-alpha -->
+<!-- 44 · s-alpha -->
 <section class="slide" id="s-alpha" data-sec="Forecasting">
   <div class="kicker">aula 02 · Ridge e seleção</div>
   <h2>Escolher α sem olhar o teste</h2>
-  <p class="lead">A Ridge minimiza <span class="mono">Σ erro² + α·Σ w²</span>. Escolha α pela <b>validação dentro do passado</b> (662 h de ajuste e 166 h de validação).</p>
+  <p class="lead">A Ridge minimiza <span class="tex">\sum \text{erro}^2+\alpha\sum w_j^2</span>. Escolha α pela <b>validação dentro do passado</b> (662 h de ajuste e 166 h de validação).</p>
   <div class="body" style="flex-direction:column;gap:10px">
     <div style="display:flex;gap:16px"><canvas id="c-alpha"></canvas><canvas id="c-coef"></canvas></div>
     <div class="controls"><span class="label">α</span><input type="range" id="al-a" min="0" max="60" value="25" style="width:260px"><span class="mono" id="al-av"></span><button class="b warn" id="al-peek">espiar o teste</button><span class="mono" id="al-out" style="margin-left:10px"></span></div>
@@ -834,7 +943,7 @@ details.reveal p{margin-top:6px}
   </div>
 </section>
 
-<!-- 41 · s-onestep -->
+<!-- 45 · s-onestep -->
 <section class="slide" id="s-onestep" data-sec="Forecasting">
   <div class="kicker">o teste não é uma previsão única de 207 horas</div>
   <h2>Uma hora à frente, repetidamente</h2>
@@ -853,7 +962,7 @@ details.reveal p{margin-top:6px}
   <p class="big" style="margin-top:12px">No próximo slide, essa rotina roda sobre os <b>dados reais</b>.</p>
 </section>
 
-<!-- 42 · s-fc -->
+<!-- 46 · s-fc -->
 <section class="slide" id="s-fc" data-sec="Forecasting">
   <div class="kicker">aula 02 · o instante da previsão</div>
   <h2>Prever a próxima hora, uma hora de cada vez</h2>
@@ -874,7 +983,20 @@ details.reveal p{margin-top:6px}
   </div>
 </section>
 
-<!-- 43 · s-fc-result -->
+<!-- 47 · s-mae -->
+<section class="slide" id="s-mae" data-sec="Forecasting">
+  <div class="kicker">notebook 02 · seção 6 · como medir o erro</div>
+  <h2>MAE e RMSE: duas formas de resumir o erro</h2>
+  <div class="cols" style="margin-top:16px">
+    <div class="blk"><h4>MAE · erro absoluto médio</h4><div class="formula sm"><span class="tex d">\text{MAE}=\frac{1}{n}\sum_{u=1}^{n}\Bigl|\,y(u)-\widehat y(u)\,\Bigr|</span></div><p style="margin-top:8px">Tamanho médio do erro, em dB. Todos os erros pesam igual.</p></div>
+    <div class="blk"><h4>RMSE · raiz do erro quadrático médio</h4><div class="formula sm"><span class="tex d">\text{RMSE}=\sqrt{\frac{1}{n}\sum_{u=1}^{n}\bigl(y(u)-\widehat y(u)\bigr)^2}</span></div><p style="margin-top:8px">Também em dB, mas eleva ao quadrado antes de somar: <b>erros grandes pesam mais</b>.</p></div>
+  </div>
+  <div class="blk ask" style="margin-top:14px"><h4>exemplo fictício · 3 horas com erros de 1, 1 e 4 dB</h4>
+    <div class="tex d">\text{MAE}=\frac{1+1+4}{3}=2\ \text{dB}\qquad\qquad \text{RMSE}=\sqrt{\frac{1^2+1^2+4^2}{3}}=\sqrt{6}\approx 2{,}45\ \text{dB}</div>
+    <p>O RMSE ficou maior por causa da única hora com erro de 4 dB. Se o RMSE fica bem acima do MAE, há erros grandes escondidos na média.</p></div>
+</section>
+
+<!-- 48 · s-fc-result -->
 <section class="slide" id="s-fc-result" data-sec="Forecasting">
   <div class="kicker">notebook 02 · seção 6</div>
   <h2>A previsão melhora a referência?</h2>
@@ -895,7 +1017,7 @@ details.reveal p{margin-top:6px}
   </div>
 </section>
 
-<!-- 44 · s-compare -->
+<!-- 49 · s-compare -->
 <section class="slide" id="s-compare" data-sec="Forecasting">
   <div class="kicker">fechar o notebook 02 · seção 7</div>
   <h2>O que mudou entre as duas práticas?</h2>
@@ -910,7 +1032,7 @@ details.reveal p{margin-top:6px}
   </table>
 </section>
 
-<!-- 45 · s-quiz -->
+<!-- 50 · s-quiz -->
 <section class="slide" id="s-quiz" data-sec="Discussão">
   <div class="kicker">armadilhas · 20 min</div>
   <h2>Vazou ou não vazou?</h2>
@@ -919,7 +1041,7 @@ details.reveal p{margin-top:6px}
   <div class="blk limit" style="margin-top:12px"><h4>outro cuidado</h4><p>Escolher filtros, parâmetros ou a semente repetidamente pelo resultado de teste faz o teste participar do desenvolvimento.</p></div>
 </section>
 
-<!-- 46 · s-metric -->
+<!-- 51 · s-metric -->
 <section class="slide" id="s-metric" data-sec="Discussão">
   <div class="kicker">o que faltaria para uma aplicação real?</div>
   <h2>Uma boa métrica não encerra a análise</h2>
@@ -931,7 +1053,7 @@ details.reveal p{margin-top:6px}
   </div>
 </section>
 
-<!-- 47 · s-end -->
+<!-- 52 · s-end -->
 <section class="slide" id="s-end" data-sec="Síntese">
   <div class="kicker">síntese · 15 min</div>
   <h2>Aplicar o método a outra telemetria</h2>
@@ -941,7 +1063,7 @@ details.reveal p{margin-top:6px}
   <p class="note" style="margin-top:auto">Dados: Aernouts et al. (Antwerp, CC BY 4.0) · Goldoni et al. (CC BY-SA 4.0) · López Escobar et al. (Sálvora, CC BY 4.0). Notebooks e slides: github.com/LorenzoDonatti/ML_meets_networks_ERRC2026</p>
 </section>
 
-<!-- 48 · s-refs -->
+<!-- 53 · s-refs -->
 <section class="slide" id="s-refs" data-sec="Síntese">
   <div class="kicker">ERRC 2026</div>
   <h2>Referências e materiais</h2>
@@ -959,6 +1081,7 @@ details.reveal p{margin-top:6px}
 <div id="chrome"><span>ML meets networks · ERRC 2026</span><span id="sec"></span><div class="prog"><i id="progbar"></i></div><span id="num"></span><button id="bt-theme" title="Tema (T)">◐ tema</button><button id="bt-full" title="Tela cheia (F)">⛶</button></div>
 </div></div>
 
+<script src="vendor/katex/katex.min.js"></script>
 <script src="rssi_data.js"></script>
 <script>
 "use strict";
@@ -1521,6 +1644,7 @@ addEventListener('keydown',e=>{const tg=e.target.tagName,typing=tg==='INPUT'||tg
   else if(!typing&&(e.key==='t'||e.key==='T'))toggleTheme();else if(!typing&&(e.key==='f'||e.key==='F'))toggleFull();});
 document.addEventListener('pointerup',()=>{const a=document.activeElement;if(a&&(a.type==='range'||a.tagName==='BUTTON'||a.tagName==='SUMMARY'))setTimeout(()=>a.blur(),0);});
 addEventListener('hashchange',()=>{const n=parseInt(location.hash.slice(1));if(n)go(n-1);});
+if(window.katex)document.querySelectorAll('.tex').forEach(el=>{try{katex.render(el.textContent,el,{displayMode:el.classList.contains('d'),throwOnError:false,strict:false});}catch(e){}});
 readColors();go((parseInt(location.hash.slice(1))||1)-1);
 let last=performance.now();
 function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;try{S[slides[cur].id]?.frame?.(now/1000,dt);}catch(err){console.error(err);}requestAnimationFrame(loop);}
