@@ -109,12 +109,80 @@ table.t{border-collapse:collapse;font-family:var(--mono);font-size:12.5px;width:
 #chrome button{font:inherit;background:none;border:1px solid var(--line);color:var(--muted);border-radius:7px;padding:3px 8px;cursor:pointer}
 #chrome button:hover{color:var(--text);border-color:var(--accent)}
 #sec{color:var(--accent);text-transform:uppercase;letter-spacing:.12em}
+
+/* blocos explicativos (conteúdo da aula original) */
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.cols3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:14px}
+.blk{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;padding:12px 16px}
+.blk h4{font-family:var(--mono);font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;font-weight:600}
+.blk p{font-size:17.5px;line-height:1.5}
+.blk.ask{border-left-color:var(--pkt)}.blk.ask h4{color:var(--pkt)}
+.blk.limit{border-left-color:var(--bad)}.blk.limit h4{color:var(--bad)}
+.blk.okb{border-left-color:var(--good)}.blk.okb h4{color:var(--good)}
+.blk.soft{border-left-color:var(--accent2)}.blk.soft h4{color:var(--accent2)}
+.ul{font-size:19.5px;line-height:1.55;padding-left:26px;margin-top:16px}
+.ul li{margin:4px 0}.ul li::marker{color:var(--accent);font-weight:700}
+.ul.sm{font-size:16px}
+.ul.q li::marker{content:"?  ";color:var(--pkt)}
+.flow{display:flex;align-items:center;justify-content:center;margin:16px 0}
+.flow.left{justify-content:flex-start}
+.node{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px 18px;text-align:center;font-size:17px;font-weight:600;min-width:150px}
+.node small{display:block;color:var(--muted);font-size:13.5px;margin-top:3px;font-weight:400}
+.node em{display:block;font-style:normal;color:var(--accent);font-size:12px;margin-top:6px;font-family:var(--mono);font-weight:500}
+.node.hl{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.node.wide{min-width:280px}
+.flow.sm{margin:10px 0}.flow.sm .node{min-width:0;font-size:13.5px;padding:8px 10px}.flow.sm .arr{width:28px}
+.arr{flex:none;width:54px;height:2px;background:var(--muted);position:relative;margin:0 10px}
+.arr.long{width:120px}
+.arr::after{content:"";position:absolute;right:-3px;top:-5px;border-top:6px solid transparent;border-bottom:6px solid transparent;border-left:10px solid var(--muted)}
+.arr span{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap}
+.arr.rev::after{right:auto;left:-3px;border-left:none;border-right:10px solid var(--muted)}
+.arr.dash{background:repeating-linear-gradient(90deg,var(--muted) 0 6px,transparent 6px 11px)}
+.wall{width:10px;height:70px;background:var(--muted);opacity:.55;border-radius:3px;margin-left:12px}
+.formula{font-family:"Cambria Math",Cambria,"Latin Modern Math","Times New Roman",serif;font-size:28px;text-align:center;padding:14px;background:var(--panel2);border-radius:12px;margin-top:12px;line-height:1.5}
+.formula.sm{font-size:21px;padding:10px}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 4px;line-height:1.25}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 6px 2px}
+.frac>span:last-child{padding-top:2px}
+.ub{display:inline-block;text-align:center;vertical-align:top}
+.ub em{display:block;font-size:12px;font-family:var(--sans);font-style:normal;color:var(--muted);border-top:1.5px solid var(--muted);margin-top:2px;padding-top:2px;line-height:1.3}
+.figwrap{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:12px}
+.figwrap img{max-width:100%;max-height:300px;border-radius:10px;background:#fff;border:1px solid var(--line)}
+.cap{font-size:12px;color:var(--muted);text-align:center}
+.t.lg{font-family:var(--sans);font-size:16.5px}
+.t.lg th,.t.lg td{padding:8px 12px;text-align:left;white-space:normal}
+details.reveal{margin-top:8px}
+details.reveal summary{cursor:pointer;color:var(--pkt);font-family:var(--mono);font-size:12.5px}
+details.reveal p{margin-top:6px}
+.agenda{display:flex;gap:4px;margin-top:20px}
+.agenda div{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12.5px;color:var(--muted);overflow:hidden;white-space:nowrap}
+.agenda b{display:block;font-family:var(--mono);font-size:16px;color:var(--text)}
+.agenda .hot{border-color:var(--accent)}.agenda .hot b{color:var(--accent)}
+.ex-line{position:relative;height:50px;margin:16px 30px 6px}
+.ex-line::before{content:"";position:absolute;left:0;right:0;top:24px;height:2px;background:var(--muted)}
+.ex-line i{position:absolute;top:18px;width:14px;height:14px;border-radius:50%;transform:translateX(-50%)}
+.ex-line i.g{background:var(--accent)}
+.ex-line i.e{background:var(--pkt);border-radius:2px;transform:translateX(-50%) rotate(45deg)}
+.ex-line span{position:absolute;top:36px;transform:translateX(-50%);font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap}
+.ex-line span.ev{top:-6px;color:var(--pkt);font-weight:700}
+.errline{position:relative;height:80px;margin:34px 140px 6px}
+.errline::before{content:"";position:absolute;left:12px;right:12px;top:30px;height:2px;background:var(--text)}
+.errline i{position:absolute;top:21px;width:20px;height:20px}
+.errline i.real{left:0;border-radius:50%;background:var(--accent)}
+.errline i.est{right:0;background:var(--pkt);border-radius:3px;transform:rotate(45deg)}
+.errline span{position:absolute;font-family:var(--mono);font-size:13px;color:var(--muted)}
+.errline .dist{left:50%;top:0;transform:translateX(-50%);color:var(--text)}
+.errline .l1{left:-12px;top:52px}.errline .l2{right:-16px;top:52px}
+.tree{display:flex;flex-direction:column;align-items:center}
+.branches{display:flex;gap:44px;margin-top:16px}
+.branches>div{display:flex;flex-direction:column;align-items:center;gap:6px}
+.branches span{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
 </style>
 </head>
 <body>
 <div id="deck"><div id="stage">
 
-<!-- 0 · título -->
+<!-- 01 · s-title -->
 <section class="slide" id="s-title" data-sec="Abertura">
   <canvas id="c-title" class="bgcanvas"></canvas>
   <div class="titlebox">
@@ -126,18 +194,101 @@ table.t{border-collapse:collapse;font-family:var(--mono);font-size:12.5px;width:
   </div>
 </section>
 
-<!-- 1 · caminho -->
-<section class="slide" id="s-pipe" data-sec="Abertura">
+<!-- 02 · s-fronts -->
+<section class="slide" id="s-fronts" data-sec="Problemas">
+  <div class="kicker">o que vamos fazer</div>
+  <h2>Duas frentes, um mesmo método</h2>
+  <div class="cols" style="margin-top:22px">
+    <div class="blk"><h4>1 · Localização</h4><p>Um pacote foi recebido. <b>Onde estava o dispositivo?</b></p>
+      <div class="flow sm"><div class="node">sinais de vários gateways</div><div class="arr"></div><div class="node hl">posição estimada</div></div>
+      <p class="note">Antwerp: prática principal. Sálvora: contraponto sobre avaliação.</p></div>
+    <div class="blk"><h4>2 · Previsão temporal</h4><p>Temos o histórico de um enlace. <b>Qual será o RSSI na próxima hora?</b></p>
+      <div class="flow sm"><div class="node">sinais de vários instantes</div><div class="arr"></div><div class="node hl">valor futuro estimado</div></div>
+      <p class="note">Um enlace do dataset de Goldoni et al.</p></div>
+  </div>
+  <div class="blk ask" style="margin-top:18px"><h4>em comum</h4><p>Nas duas, partimos de uma <b>pergunta de rede</b>, montamos uma tabela de entradas X e resposta y, separamos treino e teste de acordo com a pergunta e comparamos o modelo com uma <b>referência simples</b>.</p></div>
+</section>
+
+<!-- 03 · s-goals -->
+<section class="slide" id="s-goals" data-sec="Problemas">
+  <div class="kicker">a proposta do minicurso</div>
+  <h2>O que esperamos construir em 2h30</h2>
+  <div class="blk" style="margin-top:16px"><h4>partir de uma pergunta de redes, não de um algoritmo</h4><p>Aprender a transformar dados de uma rede sem fio em um problema de aprendizado de máquina e <b>avaliar se a solução faz sentido</b>.</p></div>
+  <p class="big" style="margin-top:16px;font-weight:600">Ao final, esperamos que você consiga:</p>
+  <ol class="ul" style="margin-top:6px">
+    <li>Definir <b>o que prever</b> e quais dados estarão disponíveis naquele instante.</li>
+    <li><b>Explorar</b> os dados e <b>separar treino e teste</b> de acordo com a pergunta.</li>
+    <li>Executar um exemplo no Colab e <b>comparar o modelo com uma referência simples</b>.</li>
+    <li><b>Interpretar erros e limitações</b> antes de concluir que o modelo é útil para a rede.</li>
+  </ol>
+  <div class="agenda">
+    <div style="flex:15"><b>15</b>motivação</div><div style="flex:15"><b>15</b>formulação</div>
+    <div class="hot" style="flex:40"><b>40</b>prática · localização</div><div style="flex:6"><b>5</b>pausa</div>
+    <div class="hot" style="flex:40"><b>40</b>prática · forecasting</div><div style="flex:20"><b>20</b>armadilhas</div><div style="flex:15"><b>15</b>síntese</div>
+  </div>
+  <p class="note" style="margin-top:8px">Minutos de cada bloco. Dois estudos guiados: não é uma formação completa em ML nem uma implantação em produção.</p>
+</section>
+
+<!-- 04 · s-why -->
+<section class="slide" id="s-why" data-sec="Problemas">
+  <div class="kicker">da aplicação ao dado</div>
+  <h2>Por que essas perguntas interessam a redes?</h2>
+  <div class="cols" style="margin-top:22px">
+    <div><div class="blk"><h4>localização de um ativo</h4><p>Um equipamento transmite pela rede. Queremos uma indicação de sua posição <b>sem fornecer seu GPS ao estimador</b>.</p></div>
+      <ul class="ul q"><li>Serve para indicar uma região?</li><li>É preciso encontrar uma sala?</li></ul></div>
+    <div><div class="blk"><h4>monitoramento de um enlace</h4><p>Um sensor envia telemetria regularmente. Queremos <b>antecipar a evolução</b> de uma medida do sinal.</p></div>
+      <ul class="ul q"><li>Há informação no histórico?</li><li>Ela acrescenta algo ao último valor?</li></ul></div>
+  </div>
+  <div class="blk limit" style="margin-top:20px"><h4>limite</h4><p>Prever RSSI <b>não equivale</b> a prever falha, perda de pacotes ou disponibilidade.</p></div>
+</section>
+
+<!-- 05 · s-ai -->
+<section class="slide" id="s-ai" data-sec="Problemas">
+  <div class="kicker">o mínimo para orientar as práticas</div>
+  <h2>Que tipo de problema de IA é esse?</h2>
+  <table class="t lg" style="margin-top:18px">
+    <tr><th>Abordagem</th><th>Informação para aprender</th><th>Exemplo em redes</th></tr>
+    <tr class="hl"><td><b>Supervisionado</b></td><td>Exemplos com resposta conhecida</td><td>Sinal → posição</td></tr>
+    <tr><td>Não supervisionado</td><td>Procurar estrutura sem resposta-alvo fornecida</td><td>Agrupar perfis de tráfego</td></tr>
+    <tr><td>Por reforço</td><td>Ações, consequências e recompensas</td><td>Escolher ações de controle</td></tr>
+  </table>
+  <div class="blk" style="margin-top:18px"><h4>nosso recorte</h4><p>Os dois exercícios usam <b>regressão supervisionada</b>: estimar valores numéricos. No forecasting, construímos os exemplos a partir do próprio histórico.</p></div>
+  <div class="cols" style="margin-top:14px">
+    <div class="blk soft"><h4>regressão × classificação</h4><p>Se a resposta fosse uma categoria ("bom/ruim"), seria <b>classificação</b>. Aqui a resposta é um número: metros ou dBm.</p></div>
+    <div class="blk soft"><h4>fora do escopo</h4><p>Não vamos treinar redes neurais nem estudar todas essas abordagens.</p></div>
+  </div>
+</section>
+
+<!-- 06 · s-pipe -->
+<section class="slide" id="s-pipe" data-sec="Problemas">
   <div class="kicker">o método</div>
   <h2>Duas perguntas, um mesmo caminho</h2>
-  <p class="lead">A escolha do algoritmo vem <b>depois</b> da pergunta. Troque a frente e clique em cada etapa.</p>
+  <p class="lead">A escolha do algoritmo vem <b>depois</b> da pergunta. Hoje: aprender a justificar esse caminho, não decorar algoritmos. Troque a frente e clique em cada etapa.</p>
   <div class="controls" style="margin-top:14px"><span class="seg" id="pipe-mode"></span></div>
   <div class="pipe" id="pipe"><div class="pulse"></div></div>
   <div class="panel pipe-detail" id="pipe-detail"></div>
 </section>
 
-<!-- 2 · chirp -->
-<section class="slide" id="s-chirp" data-sec="Rede">
+<!-- 07 · s-lora -->
+<section class="slide" id="s-lora" data-sec="Formulação">
+  <div class="kicker">o contexto dos nossos dados</div>
+  <h2>LoRa e LoRaWAN: do sensor à aplicação</h2>
+  <div class="cols" style="margin-top:18px">
+    <div class="blk"><h4>LoRa · comunicação pelo rádio</h4><p>Modulação usada para transmitir <b>pequenos volumes de dados</b>, com foco em <b>longo alcance</b> e <b>baixo consumo</b>.</p></div>
+    <div class="blk"><h4>LoRaWAN · organização da rede</h4><p>Protocolo que coordena a comunicação dos dispositivos com a infraestrutura. <b>LoRa e LoRaWAN não são sinônimos.</b></p></div>
+  </div>
+  <div class="flow" style="margin-top:26px">
+    <div class="node">Nó / dispositivo<small>sensor ou rastreador</small></div><div class="arr"><span>LoRa</span></div>
+    <div class="node">Gateway<small>recebe pelo rádio</small></div><div class="arr"><span>rede IP</span></div>
+    <div class="node">Servidor de rede<small>reúne recepções</small></div><div class="arr"></div>
+    <div class="node">Aplicação<small>usa os dados</small></div>
+  </div>
+  <div class="blk ask" style="margin-top:14px"><h4>uplink</h4><p>Mensagem do dispositivo para a rede. <b>Um mesmo uplink pode chegar a vários gateways</b>: é isso que a localização vai explorar.</p></div>
+  <p class="note" style="margin-top:10px">A seguir: como o rádio LoRa transmite, o custo do spreading factor e um uplink animado de ponta a ponta. Esquema simplificado. Fonte: The Things Network.</p>
+</section>
+
+<!-- 08 · s-chirp -->
+<section class="slide" id="s-chirp" data-sec="Formulação">
   <div class="kicker">camada física · LoRa</div>
   <h2>LoRa transmite com chirps</h2>
   <p class="lead">Cada símbolo é uma varredura de frequência dentro de 125 kHz. A informação está em <b>onde a varredura começa</b>.</p>
@@ -162,8 +313,8 @@ table.t{border-collapse:collapse;font-family:var(--mono);font-size:12.5px;width:
   </div>
 </section>
 
-<!-- 3 · SF -->
-<section class="slide" id="s-sf" data-sec="Rede">
+<!-- 09 · s-sf -->
+<section class="slide" id="s-sf" data-sec="Formulação">
   <div class="kicker">camada física · troca</div>
   <h2>Spreading factor: alcance custa tempo no ar</h2>
   <p class="lead">Clique em uma linha da tabela. O círculo usa um modelo de propagação didático, sem obstáculos.</p>
@@ -181,8 +332,8 @@ table.t{border-collapse:collapse;font-family:var(--mono);font-size:12.5px;width:
   </div>
 </section>
 
-<!-- 4 · LoRaWAN -->
-<section class="slide" id="s-wan" data-sec="Rede">
+<!-- 10 · s-wan -->
+<section class="slide" id="s-wan" data-sec="Formulação">
   <div class="kicker">arquitetura · LoRaWAN</div>
   <h2>LoRa ≠ LoRaWAN</h2>
   <p class="lead"><b>LoRa</b> é a modulação de rádio. <b>LoRaWAN</b> é o protocolo que organiza dispositivos, gateways e servidores. Clique nos elementos.</p>
@@ -193,31 +344,11 @@ table.t{border-collapse:collapse;font-family:var(--mono);font-size:12.5px;width:
   </div>
 </section>
 
-<!-- 5 · quem ouviu -->
-<section class="slide" id="s-hear" data-sec="Rede">
-  <div class="kicker">uplink · broadcast</div>
-  <h2>Um pacote, várias recepções</h2>
-  <p class="lead">Arraste o dispositivo pelo mapa. Cada gateway que decodifica o pacote registra um RSSI; quem não ouviu fica <b>ausente</b>.</p>
-  <div class="body">
-    <div class="col">
-      <canvas id="c-hear"></canvas>
-    </div>
-    <div class="panel side">
-      <div class="controls"><span class="label">SF</span><span class="seg" id="hear-sf"></span></div>
-      <div class="controls"><button class="b" id="hear-tx">transmitir</button><button class="b" id="hear-auto">automático</button><button class="b" id="hear-noise">variação (σ = 4 dB)</button></div>
-      <div id="hear-rows" style="display:flex;flex-direction:column;gap:7px;margin-top:4px"></div>
-      <div class="label" style="margin-top:4px">fingerprint deste pacote</div>
-      <div class="vec" id="hear-vec"></div>
-      <p class="note" id="hear-note"></p>
-    </div>
-  </div>
-</section>
-
-<!-- 6 · dBm -->
-<section class="slide" id="s-dbm" data-sec="Rede">
-  <div class="kicker">medida · RSSI</div>
-  <h2>dBm é escala logarítmica</h2>
-  <p class="lead">RSSI é potência recebida em dBm, relativa a 1 mW. <b>−80 dBm é mais forte que −100 dBm</b>, e muito mais forte do que parece.</p>
+<!-- 11 · s-dbm -->
+<section class="slide" id="s-dbm" data-sec="Formulação">
+  <div class="kicker">medida · Received Signal Strength Indicator</div>
+  <h2>RSSI: com que potência o sinal chegou?</h2>
+  <p class="lead">Indicador da potência recebida, em <b>dBm</b>: escala logarítmica relativa a 1 mW. <b>−80 dBm é mais forte que −100 dBm</b>; o sinal negativo não é erro de medida. Mova os controles.</p>
   <div class="col" style="margin-top:14px;flex:1">
     <canvas id="c-ruler"></canvas>
     <div class="body" style="margin-top:4px">
@@ -236,11 +367,11 @@ table.t{border-collapse:collapse;font-family:var(--mono);font-size:12.5px;width:
   </div>
 </section>
 
-<!-- 7 · SNR -->
-<section class="slide" id="s-snr" data-sec="Rede">
+<!-- 12 · s-snr -->
+<section class="slide" id="s-snr" data-sec="Formulação">
   <div class="kicker">medida · SNR</div>
   <h2>SNR: o sinal se destaca do ruído?</h2>
-  <p class="lead">SNR = potência do sinal − potência do ruído, em dB. LoRa decodifica até <b>abaixo do ruído</b>, graças ao espalhamento.</p>
+  <p class="lead"><b>RSSI</b> (dBm) diz com que intensidade o sinal chegou; <b>SNR</b> (dB) diz como ele se compara ao ruído. Mesmo sinal com mais ruído = menor SNR. LoRa decodifica até <b>abaixo do ruído</b>.</p>
   <div class="body">
     <canvas id="c-snr"></canvas>
     <div class="panel side">
@@ -248,12 +379,68 @@ table.t{border-collapse:collapse;font-family:var(--mono);font-size:12.5px;width:
       <div><div class="label">piso de ruído</div><input type="range" id="snr-n" min="-125" max="-100" value="-114"> <span class="mono" id="snr-nv"></span></div>
       <div class="stat" id="snr-v"></div>
       <table class="t" id="snr-table"></table>
-      <p class="note">Limites típicos de SNR de demodulação do SX127x. Simplificação: aqui o "sinal" é a potência do LoRa na banda, sem o ruído.</p>
+      <p class="note">Limites típicos de SNR de demodulação do SX127x. Simplificação: aqui o "sinal" é a potência do LoRa na banda, sem o ruído. RSSI e SNR são medições da recepção, não garantias para os próximos pacotes. <b>Na prática, usamos RSSI</b>; o SNR ajuda a entender o contexto.</p>
     </div>
   </div>
 </section>
 
-<!-- 8 · tabela -->
+<!-- 13 · s-hear -->
+<section class="slide" id="s-hear" data-sec="Formulação">
+  <div class="kicker">uplink · broadcast</div>
+  <h2>Um pacote, várias recepções</h2>
+  <p class="lead">O que a rede observa: <b>uma transmissão, várias recepções</b>. Arraste o dispositivo; cada gateway que decodifica registra um RSSI, e quem não ouviu fica <b>ausente</b>.</p>
+  <div class="body">
+    <div class="col">
+      <canvas id="c-hear"></canvas>
+    </div>
+    <div class="panel side">
+      <div class="controls"><span class="label">SF</span><span class="seg" id="hear-sf"></span></div>
+      <div class="controls"><button class="b" id="hear-tx">transmitir</button><button class="b" id="hear-auto">automático</button><button class="b" id="hear-noise">variação (σ = 4 dB)</button></div>
+      <div id="hear-rows" style="display:flex;flex-direction:column;gap:7px;margin-top:4px"></div>
+      <div class="label" style="margin-top:4px">fingerprint deste pacote</div>
+      <div class="vec" id="hear-vec"></div>
+      <p class="note" id="hear-note"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 14 · s-instant -->
+<section class="slide" id="s-instant" data-sec="Formulação">
+  <div class="kicker">localização depois da recepção</div>
+  <h2>O instante define o que pode entrar</h2>
+  <p class="lead">Antes de escolher qualquer modelo, pergunte: <b>em que momento a estimativa será feita?</b></p>
+  <div class="flow" style="margin-top:30px">
+    <div class="node">Transmitir<small>o pacote</small></div><div class="arr"></div>
+    <div class="node hl">Reunir as recepções<small>RSSI e SNR disponíveis</small></div><div class="arr"></div>
+    <div class="node">Estimar<small>a posição</small></div>
+  </div>
+  <div class="cols" style="margin-top:12px">
+    <div class="blk limit"><h4>antes de transmitir</h4><p>Ainda não sabemos o RSSI <b>deste</b> pacote.</p></div>
+    <div class="blk okb"><h4>depois da recepção</h4><p>Podemos usá-lo como <b>entrada</b>.</p></div>
+  </div>
+  <div class="blk ask" style="margin-top:16px"><h4>pergunta à turma</h4><p>E se quiséssemos escolher uma configuração <b>antes</b> de transmitir?</p>
+    <details class="reveal"><summary>ver comentário</summary><p>Aí o RSSI deste pacote ainda não existe: só poderíamos usar o histórico de pacotes anteriores. Em operação, também seria preciso definir quanto tempo esperar pelas recepções de cada uplink.</p></details></div>
+</section>
+
+<!-- 15 · s-strong -->
+<section class="slide" id="s-strong" data-sec="Formulação">
+  <div class="kicker">RSSI não é uma régua de distância</div>
+  <h2>Por que o sinal mais forte não resolve tudo?</h2>
+  <div class="flow" style="margin-top:40px">
+    <div class="node">Posição A<small>perto, com obstáculo</small></div><div class="wall"></div><div class="arr dash"></div>
+    <div class="node hl">Gateway</div><div class="arr rev"></div>
+    <div class="node">Posição B<small>longe, em outra condição</small></div>
+  </div>
+  <p class="note" style="text-align:center">A e B podem produzir potências semelhantes. Esquema qualitativo, não modelo de propagação.</p>
+  <ul class="ul" style="margin-top:18px">
+    <li>Ambiente e antenas também afetam a recepção.</li>
+    <li>O <b>padrão conjunto de vários receptores</b> pode reduzir a ambiguidade: é a ideia do fingerprint.</li>
+    <li>Dois lugares diferentes podem ter fingerprints parecidos. Um RSSI não determina uma distância nem uma posição única.</li>
+  </ul>
+  <div class="blk ask" style="margin-top:14px"><h4>experimente</h4><p>Volte ao slide "Um pacote, várias recepções" e coloque o dispositivo atrás de um prédio: cada prédio no caminho custa 12 dB no modelo didático, e o gateway mais perto pode deixar de ser o mais forte.</p></div>
+</section>
+
+<!-- 16 · s-table -->
 <section class="slide" id="s-table" data-sec="Localização">
   <div class="kicker">aula 01 · formulação</div>
   <h2>De pacotes a uma tabela supervisionada</h2>
@@ -266,11 +453,89 @@ table.t{border-collapse:collapse;font-family:var(--mono);font-size:12.5px;width:
     <div class="panel side">
       <table class="t" id="tab-t"></table>
       <p class="note" id="tab-note"></p>
+      <p class="note">A resposta (x, y) tem duas componentes numéricas: <b>regressão multissaída</b>. X é o fingerprint que teremos ao receber um novo pacote; y são as coordenadas conhecidas na coleta, usadas para ensinar e avaliar.</p>
     </div>
   </div>
 </section>
 
-<!-- 9 · centroide -->
+<!-- 17 · s-gps -->
+<section class="slide" id="s-gps" data-sec="Formulação">
+  <div class="kicker">treinamento e uso do modelo</div>
+  <h2>Aprender não é consultar o GPS do novo pacote</h2>
+  <div class="label" style="margin-top:26px">treinamento · uma vez, com dados históricos</div>
+  <div class="flow left">
+    <div class="node">Fingerprints<small>e GPS do treino</small></div><div class="arr"></div>
+    <div class="node">Treinamento</div><div class="arr"></div><div class="node hl">Modelo ajustado</div>
+  </div>
+  <div class="label" style="margin-top:20px">uso · a cada pacote novo</div>
+  <div class="flow left">
+    <div class="node">Novo fingerprint<small>sem fornecer GPS</small></div><div class="arr"></div>
+    <div class="node hl">Aplicar o modelo</div><div class="arr"></div><div class="node">Posição estimada</div>
+  </div>
+  <div class="blk" style="margin-top:22px"><h4>no teste</h4><p>Guardamos o GPS real para <b>conferir o erro</b>, não para produzir a estimativa. GPS, horário, ID do dispositivo e nome da partição ficam fora de X.</p></div>
+</section>
+
+<!-- 18 · s-antwerp -->
+<section class="slide" id="s-antwerp" data-sec="Localização">
+  <div class="kicker">notebook 01 · seções 0 a 2</div>
+  <h2>Antwerp: investigar a coleta antes de treinar</h2>
+  <div class="figwrap"><img src="../slides/figures/01_localizacao_03.png" alt="RSSI dos três gateways mais presentes no treino" style="max-height:270px"><span class="cap">RSSI dos três gateways mais presentes, apenas no treino. Triângulo = gateway; cinza = ausência. Dados: Aernouts et al., Antwerp.</span></div>
+  <div class="cols3">
+    <div class="blk"><h4>o recorte</h4><p>12 mil pacotes e 39 gateways com coordenadas conhecidas. 163 pacotes sem recepção nesses 39 ficaram de fora.</p></div>
+    <div class="blk"><h4>o que perguntar</h4><p>Onde há observações? Que sinais distinguem essas regiões? Quem domina a coleta?</p></div>
+    <div class="blk ask"><h4>30% de presença = 70% de perda?</h4><details class="reveal"><summary>ver comentário</summary><p>Não. Só temos os pacotes registrados; não conhecemos as transmissões perdidas. Presença no dataset não é PDR.</p></details></div>
+  </div>
+</section>
+
+<!-- 19 · s-strat -->
+<section class="slide" id="s-strat" data-sec="Localização">
+  <div class="kicker">notebook 01 · seção 4 · visão geral</div>
+  <h2>Três estratégias para o mesmo problema</h2>
+  <table class="t lg" style="margin-top:16px">
+    <tr><th>Método</th><th>Como produz a posição</th><th>Informação necessária</th></tr>
+    <tr><td><b>Centroide ponderado</b></td><td>Combina posições de gateways; sinal forte recebe maior peso</td><td>RSSI e coordenadas dos gateways</td></tr>
+    <tr><td><b>k-NN</b></td><td>Busca cinco fingerprints semelhantes e combina suas posições</td><td>Fingerprints rotulados com GPS</td></tr>
+    <tr><td><b>Random Forest</b></td><td>Combina regras aprendidas por várias árvores</td><td>Fingerprints rotulados com GPS</td></tr>
+  </table>
+  <div class="cols" style="margin-top:16px">
+    <div class="blk"><h4>controle sem sinais</h4><p>A posição mediana do treino:</p><div class="formula sm">p̂<sub>controle</sub> = ( mediana(x<sub>i</sub>), mediana(y<sub>i</sub>) )<sub>treino</sub></div><p class="note" style="margin-top:6px">Não é um sistema de localização: é o piso que qualquer método precisa superar.</p></div>
+    <div class="blk limit"><h4>ausência = −140</h4><p>Para k-NN e RF, gateway ausente recebe o código fixo −140: abaixo das potências do arquivo, <b>não uma medição física</b> nem um limiar universal de sensibilidade. É uma escolha de representação.</p></div>
+  </div>
+</section>
+
+<!-- 20 · s-split -->
+<section class="slide" id="s-split" data-sec="Localização">
+  <div class="kicker">notebook 01 · seção 3 · antes de treinar</div>
+  <h2>Que generalização estamos avaliando?</h2>
+  <div class="flow" style="margin-top:28px">
+    <div class="node">Treino<small>8.000 pacotes · até 24/01/2019</small><em>aprender relações</em></div><div class="arr"><span>tempo</span></div>
+    <div class="node">Validação<small>2.000 pacotes · 25/01 a 01/02</small><em>conferir escolhas</em></div><div class="arr"></div>
+    <div class="node hl">Teste<small>2.000 pacotes · a partir de 02/02</small><em>avaliar sem reajustar</em></div>
+  </div>
+  <ul class="ul">
+    <li>Dias UTC inteiros, em ordem temporal: <b>nenhum dia aparece em duas partes</b>.</li>
+    <li>Pergunta: localizar pacotes posteriores <b>desta rede</b>.</li>
+    <li>Lugares e dispositivos podem se repetir: <b>não</b> é um teste em regiões inéditas nem em outra cidade.</li>
+    <li>Parâmetros fixados antes dos resultados. Se quiséssemos escolher k, faríamos na validação, nunca no teste.</li>
+  </ul>
+</section>
+
+<!-- 21 · s-cent-math -->
+<section class="slide" id="s-cent-math" data-sec="Localização">
+  <div class="kicker">referência geométrica, sem treinamento</div>
+  <h2>Centroide: uma média das posições dos gateways</h2>
+  <p class="lead">Para cada gateway que recebeu: r<sub>g</sub> é o RSSI em dBm e <b>p</b><sub>g</sub> = (x<sub>g</sub>, y<sub>g</sub>) é sua posição em metros. r<sub>máx</sub> é o maior RSSI recebido.</p>
+  <div class="formula">a<sub>g</sub> = 10<sup>(r<sub>g</sub> − r<sub>máx</sub>)/10</sup> &emsp;&emsp; <b>p̂</b> = <span class="frac"><span>Σ<sub>g</sub> a<sub>g</sub> <b>p</b><sub>g</sub></span><span>Σ<sub>g</sub> a<sub>g</sub></span></span></div>
+  <div class="cols" style="margin-top:14px">
+    <div class="blk"><h4>passo a passo</h4><ol class="ul sm" style="margin-top:4px"><li>Converter cada RSSI em potência <b>relativa ao mais forte</b> (o mais forte vale 1).</li><li>Cada 10 dB abaixo divide o peso por 10.</li><li>Fazer a média das posições dos gateways com esses pesos.</li></ol></div>
+    <div class="blk ask"><h4>exemplo fictício</h4>
+      <div class="ex-line"><span class="ev" style="left:9.09%">x̂ = 10 m</span><i class="g" style="left:0%"></i><i class="g" style="left:100%"></i><i class="e" style="left:9.09%"></i><span style="left:0%">A · 0 m</span><span style="left:100%">B · 110 m</span></div>
+      <p>A: −80 dBm → a = 1 · B: −90 dBm → a = 0,1<br>x̂ = (1·0 + 0,1·110) / 1,1 = <b>10 m</b>. A pesa dez vezes mais que B.</p></div>
+  </div>
+  <div class="blk limit" style="margin-top:12px"><h4>limite</h4><p>Não é trilateração nem conversão de RSSI em distância. Gateway ausente tem peso zero; com um único receptor, retorna a posição dele.</p></div>
+</section>
+
+<!-- 22 · s-cent -->
 <section class="slide" id="s-cent" data-sec="Localização">
   <div class="kicker">aula 01 · referência geométrica</div>
   <h2>Centroide ponderado</h2>
@@ -288,7 +553,24 @@ table.t{border-collapse:collapse;font-family:var(--mono);font-size:12.5px;width:
   </div>
 </section>
 
-<!-- 10 · kNN -->
+<!-- 23 · s-knn-math -->
+<section class="slide" id="s-knn-math" data-sec="Localização">
+  <div class="kicker">cinco vizinhos no espaço dos fingerprints, não no mapa</div>
+  <h2>k-NN: encontrar sinais parecidos</h2>
+  <p class="lead"><b>r</b>: novo vetor de RSSI · <b>r</b><sub>i</sub>: vetor de um exemplo de treino · <b>p</b><sub>i</sub>: posição conhecida daquele exemplo · G: número de gateways · N<sub>5</sub>: os cinco menores d<sub>i</sub>.</p>
+  <div class="formula">d<sub>i</sub> = √( Σ<sub>g=1</sub><sup>G</sup> (r<sub>g</sub> − r<sub>ig</sub>)² ) &emsp;&emsp; <b>p̂</b> = <span class="frac"><span>Σ<sub>i∈N<sub>5</sub></sub> (1/d<sub>i</sub>) <b>p</b><sub>i</sub></span><span>Σ<sub>i∈N<sub>5</sub></sub> (1/d<sub>i</sub>)</span></span></div>
+  <div class="flow">
+    <div class="node">Novo fingerprint</div><div class="arr"></div>
+    <div class="node hl">Buscar 5 exemplos<small>mais semelhantes</small></div><div class="arr"></div>
+    <div class="node">Combinar suas<small>posições de treino</small></div>
+  </div>
+  <div class="cols">
+    <div class="blk"><h4>intuição</h4><p>Distância de sinais 2 recebe o <b>dobro</b> do peso da distância 4. Se houver distância zero, a implementação faz a média só dos vizinhos coincidentes.</p></div>
+    <div class="blk limit"><h4>cuidado</h4><p>O código −140 também entra em d<sub>i</sub>. Fingerprints semelhantes <b>não garantem</b> posições próximas. São duas distâncias: entre sinais (para buscar) e entre posições (para medir o erro).</p></div>
+  </div>
+</section>
+
+<!-- 24 · s-knn -->
 <section class="slide" id="s-knn" data-sec="Localização">
   <div class="kicker">aula 01 · aprendizado por exemplos</div>
   <h2>k-NN: vizinhos no espaço dos sinais, não no mapa</h2>
@@ -300,7 +582,31 @@ table.t{border-collapse:collapse;font-family:var(--mono);font-size:12.5px;width:
   </div>
 </section>
 
-<!-- 11 · RF -->
+<!-- 25 · s-rf-math -->
+<section class="slide" id="s-rf-math" data-sec="Localização">
+  <div class="kicker">cada árvore aprende divisões a partir dos sinais</div>
+  <h2>Random Forest: combinar árvores de regressão</h2>
+  <div class="cols" style="margin-top:18px;align-items:center">
+    <div class="tree">
+      <div class="node hl">RSSI A ≤ −95?</div>
+      <div class="branches"><div><span>↙ sim</span><div class="node">Folha L<small>(20, 40) m</small></div></div><div><span>não ↘</span><div class="node">Folha R<small>(90, 60) m</small></div></div></div>
+      <p class="note" style="text-align:center;margin-top:8px">Árvore simplificada; valores fictícios.</p>
+    </div>
+    <div>
+      <p class="big">Na folha, a árvore devolve a <b>média das posições</b> dos exemplos de treino que chegaram ali:</p>
+      <div class="formula sm">p̂<sub>folha</sub> = <span class="frac"><span>1</span><span>n<sub>folha</sub></span></span> Σ<sub>i∈folha</sub> <b>p</b><sub>i</sub></div>
+      <p class="big" style="margin-top:10px">A floresta faz a média de T árvores (T = 100 no notebook):</p>
+      <div class="formula sm">p̂ = <span class="frac"><span>1</span><span>T</span></span> Σ<sub>t=1</sub><sup>T</sup> p̂<sub>t</sub></div>
+    </div>
+  </div>
+  <ul class="ul">
+    <li>Cada árvore usa uma <b>reamostragem</b> do treino (bootstrap).</li>
+    <li>As divisões são escolhidas para <b>reduzir o erro quadrático</b> dentro das folhas.</li>
+    <li>A média reduz a variabilidade, mas <b>não corrige</b> dados pouco representativos.</li>
+  </ul>
+</section>
+
+<!-- 26 · s-rf -->
 <section class="slide" id="s-rf" data-sec="Localização">
   <div class="kicker">aula 01 · árvores</div>
   <h2>Random Forest: perguntas sobre os sinais</h2>
@@ -312,7 +618,20 @@ table.t{border-collapse:collapse;font-family:var(--mono);font-size:12.5px;width:
   </div>
 </section>
 
-<!-- 12 · CDF -->
+<!-- 27 · s-err -->
+<section class="slide" id="s-err" data-sec="Localização">
+  <div class="kicker">notebook 01 · seção 5</div>
+  <h2>Erro em metros: o que significa?</h2>
+  <div class="errline"><i class="real"></i><i class="est"></i><span class="dist">distância geográfica (haversine), em metros</span><span class="l1">GPS real</span><span class="l2">estimativa</span></div>
+  <ul class="ul">
+    <li><b>Mediana:</b> metade dos erros é menor ou igual a esse valor.</li>
+    <li><b>P90:</b> 90% dos erros ficam até esse valor; não é o erro máximo nem intervalo de confiança.</li>
+    <li>A <b>tolerância depende do uso</b>: localizar uma sala não é indicar uma região.</li>
+  </ul>
+  <div class="blk ask" style="margin-top:16px"><h4>primeiro a validação, depois o teste</h4><p>Os quatro métodos estimam exatamente os mesmos pacotes. A partir do teste, gráficos e recortes são diagnóstico: <b>não</b> vamos mudar k, filtros, semente ou datas e tentar de novo.</p></div>
+</section>
+
+<!-- 28 · s-cdf -->
 <section class="slide" id="s-cdf" data-sec="Localização">
   <div class="kicker">aula 01 · avaliação</div>
   <h2>Mediana, P90 e a tolerância da aplicação</h2>
@@ -329,7 +648,26 @@ table.t{border-collapse:collapse;font-family:var(--mono);font-size:12.5px;width:
   </div>
 </section>
 
-<!-- 13 · concentração -->
+<!-- 29 · s-agg -->
+<section class="slide" id="s-agg" data-sec="Localização">
+  <div class="kicker">notebook 01 · avaliação de Antwerp</div>
+  <h2>O resultado agregado é só o começo</h2>
+  <div class="cols" style="grid-template-columns:1.2fr 1fr;margin-top:14px;align-items:start">
+    <div class="figwrap" style="margin:0"><img src="../slides/figures/01_localizacao_05.png" alt="Curvas de erro acumulado no teste" style="max-height:320px"><span class="cap">Curvas do teste temporal do tutorial; não são um benchmark dos artigos.</span></div>
+    <div>
+      <table class="t lg"><tr><th>teste (m)</th><th>mediana</th><th>P90</th></tr>
+        <tr><td>Sem sinais</td><td>1.671</td><td>2.505</td></tr><tr><td>Centroide</td><td>184</td><td>1.194</td></tr>
+        <tr><td>k-NN</td><td>55</td><td>847</td></tr><tr class="hl"><td>Random Forest</td><td>45</td><td>839</td></tr></table>
+      <ul class="ul sm">
+        <li>Conferir a <b>concentração espacial</b> e os erros por condição de recepção.</li>
+        <li>Muitos pacotes próximos <b>não</b> são muitas situações independentes.</li>
+        <li>A mediana é baixa, mas a <b>cauda</b> (P90) passa de 800 m.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 30 · s-conc -->
 <section class="slide" id="s-conc" data-sec="Localização">
   <div class="kicker">aula 01 · antes de comemorar</div>
   <h2>Muitos pacotes no mesmo lugar não são muitas situações</h2>
@@ -354,7 +692,18 @@ table.t{border-collapse:collapse;font-family:var(--mono);font-size:12.5px;width:
   </div>
 </section>
 
-<!-- 14 · Sálvora -->
+<!-- 31 · s-sal-map -->
+<section class="slide" id="s-sal-map" data-sec="Localização">
+  <div class="kicker">notebook 01 · seção 6</div>
+  <h2>Sálvora: olhar o mapa muda a interpretação</h2>
+  <div class="figwrap"><img src="../slides/figures/01_localizacao_08.png" alt="Posições das transmissões em Sálvora" style="max-height:255px"><span class="cap">Posições das transmissões e gateways. Dados: López Escobar et al.</span></div>
+  <div class="cols" style="margin-top:12px">
+    <div class="blk"><h4>o cenário</h4><p>1.210 transmissões, <b>sete dispositivos móveis</b> e três gateways. Cada ponto é uma medição, não um nó fixo. Teste: 226 pacotes em blocos de 30 min por dispositivo.</p></div>
+    <div class="blk ask"><h4>repare</h4><p><b>114 dos 226</b> pacotes de teste ficam a menos de 300 m do GW1. Três blocos concentram a maior parte do teste.</p></div>
+  </div>
+</section>
+
+<!-- 32 · s-salvora -->
 <section class="slide" id="s-salvora" data-sec="Localização">
   <div class="kicker">aula 01 · contraponto</div>
   <h2>Sálvora: quem "ganha" depende de onde você olha</h2>
@@ -368,7 +717,140 @@ table.t{border-collapse:collapse;font-family:var(--mono);font-size:12.5px;width:
   </div>
 </section>
 
-<!-- 15 · forecasting -->
+<!-- 33 · s-pause -->
+<section class="slide" id="s-pause" data-sec="Localização">
+  <div class="kicker">5 minutos · início no minuto 70</div>
+  <h2>Pausa técnica</h2>
+  <ul class="ul" style="font-size:22px;margin-top:40px">
+    <li>Salvar a cópia do notebook.</li>
+    <li>Conferir as saídas já salvas se alguma célula ficou para trás.</li>
+    <li>A segunda prática é <b>independente</b> da primeira.</li>
+  </ul>
+</section>
+
+<!-- 34 · s-fc-intro -->
+<section class="slide" id="s-fc-intro" data-sec="Forecasting">
+  <div class="kicker">notebook 02 · seções 0 a 2</div>
+  <h2>Agora, o que ainda não chegou?</h2>
+  <div class="cols" style="grid-template-columns:1.15fr 1fr;align-items:start;margin-top:12px">
+    <div class="figwrap" style="margin:0"><img src="../slides/figures/02_forecasting_01.png" alt="Histórico do enlace" style="max-height:340px"><span class="cap">Histórico do enlace. Dados: Goldoni et al.; exploração restrita ao treino.</span></div>
+    <div>
+      <div class="blk"><h4>situação</h4><p>Após fechar uma hora de observações, estimar o <b>RSSI médio da próxima</b>.</p></div>
+      <table class="t lg" style="margin-top:12px"><tr><th></th><th>Localização</th><th>Forecasting</th></tr>
+        <tr><td>linha</td><td>um pacote, vários gateways</td><td>um enlace, várias horas</td></tr>
+        <tr><td>target</td><td>posição</td><td>RSSI futuro</td></tr>
+        <tr><td>erro</td><td>metros</td><td>dB</td></tr>
+        <tr><td>divisão</td><td>blocos de dias</td><td>passado treina, futuro testa</td></tr></table>
+      <p class="big" style="margin-top:10px">Se a série varia lentamente, <b>repetir o último valor</b> já pode funcionar.</p>
+      <p class="note">1.059 horas contínuas do nó RSSI_01, de 30/11/2020 a 13/01/2021, sem interpolação.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 35 · s-series -->
+<section class="slide" id="s-series" data-sec="Forecasting">
+  <div class="kicker">notebook 02 · seção 3 · exemplo fictício</div>
+  <h2>Uma série também vira uma tabela supervisionada</h2>
+  <table class="t lg" style="max-width:860px;margin:16px auto 0">
+    <tr><th>Hora-alvo u</th><th>RSSI real y(u)</th><th>lag_1 = y(u−1)</th><th>lag_2 = y(u−2)</th></tr>
+    <tr><td>08 h</td><td>−80</td><td class="nan">—</td><td class="nan">—</td></tr>
+    <tr><td>09 h</td><td>−82</td><td>−80</td><td class="nan">—</td></tr>
+    <tr><td>10 h</td><td>−81</td><td>−82</td><td>−80</td></tr>
+    <tr class="hl"><td>11 h</td><td class="nan">ainda desconhecido</td><td><b>−81</b></td><td><b>−82</b></td></tr>
+  </table>
+  <div class="formula" style="margin-top:14px">X(u) = [ y(u−1), y(u−2), y(u−3), y(u−6), y(u−24) ] &ensp;⟶&ensp; y(u)</div>
+  <div class="cols" style="margin-top:12px">
+    <ul class="ul sm" style="margin-top:0"><li>Cada <b>lag</b> é uma observação passada.</li><li>O target é um número futuro: regressão com dependência temporal.</li><li><b>Não</b> fornecer o RSSI da hora-alvo como entrada.</li></ul>
+    <div class="blk ask"><h4>faça no papel</h4><p>Qual coluna é y? Qual valor a persistência preveria para 11 h?</p>
+      <details class="reveal"><summary>ver resposta</summary><p>y é o RSSI real da hora-alvo. A persistência preveria <b>−81 dBm</b>. As 24 primeiras horas não têm todo o histórico e são descartadas: restam 1.035 exemplos.</p></details></div>
+  </div>
+</section>
+
+<!-- 36 · s-lags -->
+<section class="slide" id="s-lags" data-sec="Forecasting">
+  <div class="kicker">aula 02 · montagem da tabela</div>
+  <h2>Uma série vira tabela com lags</h2>
+  <p class="lead">Cada linha é uma hora-alvo u. <span class="mono">shift(k)</span> traz o valor de k horas <b>antes</b>. Clique numa linha.</p>
+  <div class="col" style="margin-top:12px;flex:1">
+    <canvas id="c-lags"></canvas>
+    <div class="controls"><span class="seg" id="lag-sign"></span><span class="note" id="lag-note"></span></div>
+    <div class="panel" style="padding:8px 12px"><table class="t" id="lag-t"></table></div>
+  </div>
+</section>
+
+<!-- 37 · s-order -->
+<section class="slide" id="s-order" data-sec="Forecasting">
+  <div class="kicker">notebook 02 · seção 4</div>
+  <h2>Respeitar a ordem dos acontecimentos</h2>
+  <div class="flow" style="margin-top:30px">
+    <div class="node wide">828 exemplos de treino<small>aprender modelo e escala</small></div><div class="arr long"><span>tempo</span></div>
+    <div class="node wide hl">207 exemplos de teste<small>aplicar sem reajustar</small></div>
+  </div>
+  <ul class="ul">
+    <li>1.059 horas contínuas; as 24 iniciais formam só o histórico dos lags.</li>
+    <li><b>Formar lags com o passado</b> é seguro; <b>ajustar o scaler com todos os dados</b> não é.</li>
+    <li>Testar no futuro simula a direção em que a previsão será usada.</li>
+    <li>Antes de tudo, confirmar o relógio: a linha anterior precisa ser <b>exatamente uma hora antes</b>. Um intervalo irregular mudaria o significado de <span class="mono">shift(1)</span>.</li>
+  </ul>
+</section>
+
+<!-- 38 · s-pers -->
+<section class="slide" id="s-pers" data-sec="Forecasting">
+  <div class="kicker">notebook 02 · seção 5 · sem treinamento</div>
+  <h2>Persistência: o que o modelo precisa superar?</h2>
+  <div class="cols" style="margin-top:18px">
+    <div class="blk"><h4>persistência</h4><div class="formula">ŷ(u) = y(u−1)</div><p style="margin-top:10px">Repete o último valor disponível. Sem treinamento; uma referência natural para uma série pouco variável.</p></div>
+    <div class="blk ask"><h4>exemplo fictício</h4><p>Último RSSI horário: −82 dBm. Previsão seguinte: −82 dBm.<br>Se o valor real for −80 dBm:</p><div class="formula">| y(u) − ŷ(u) | = 2 dB</div></div>
+  </div>
+  <p class="big" style="margin-top:16px">y(u) é o RSSI da hora-alvo; o chapéu em ŷ(u) indica uma estimativa. No treino real, a mudança típica entre horas consecutivas é de só <b>0,5 dB</b> (mediana): por isso a persistência é difícil de vencer.</p>
+  <div class="blk limit" style="margin-top:12px"><h4>limite</h4><p>Repete o passado mais recente: <b>não antecipa</b> uma mudança brusca.</p></div>
+</section>
+
+<!-- 39 · s-ridge -->
+<section class="slide" id="s-ridge" data-sec="Forecasting">
+  <div class="kicker">combinação linear com penalização dos coeficientes</div>
+  <h2>Ridge: aprender quanto cada lag contribui</h2>
+  <p class="lead">Cada lag é padronizado com média μ<sub>j</sub> e desvio σ<sub>j</sub> <b>do treino</b>. k<sub>j</sub> é o atraso (1, 2, 3, 6 ou 24 h), b é o intercepto e w<sub>j</sub> o peso aprendido.</p>
+  <div class="formula">z<sub>j</sub>(u) = <span class="frac"><span>y(u − k<sub>j</sub>) − μ<sub>j</sub></span><span>σ<sub>j</sub></span></span> &emsp;&emsp; ŷ(u) = b + Σ<sub>j=1</sub><sup>5</sup> w<sub>j</sub> z<sub>j</sub>(u)</div>
+  <div class="formula">min<sub>b, w</sub> [ <span class="ub">Σ<sub>u∈treino</sub> (y(u) − ŷ(u))²<em>errar pouco nos exemplos</em></span> + <span class="ub">α Σ<sub>j</sub> w<sub>j</sub>²<em>penalizar pesos muito grandes</em></span> ]</div>
+  <div class="cols" style="margin-top:12px">
+    <div class="blk"><h4>como ler</h4><p>Erro + penalização. No notebook, <b>α = 1 fixo</b>. No treino: StandardScaler.fit → Ridge.fit. No teste: a mesma transformação → predict.</p></div>
+    <div class="blk limit"><h4>não é uma média ponderada</h4><p>Os pesos podem ser negativos e não precisam somar 1. No próximo slide, os pesos reais mudam com α.</p></div>
+  </div>
+</section>
+
+<!-- 40 · s-alpha -->
+<section class="slide" id="s-alpha" data-sec="Forecasting">
+  <div class="kicker">aula 02 · Ridge e seleção</div>
+  <h2>Escolher α sem olhar o teste</h2>
+  <p class="lead">A Ridge minimiza <span class="mono">Σ erro² + α·Σ w²</span>. Escolha α pela <b>validação dentro do passado</b> (662 h de ajuste e 166 h de validação).</p>
+  <div class="body" style="flex-direction:column;gap:10px">
+    <div style="display:flex;gap:16px"><canvas id="c-alpha"></canvas><canvas id="c-coef"></canvas></div>
+    <div class="controls"><span class="label">α</span><input type="range" id="al-a" min="0" max="60" value="25" style="width:260px"><span class="mono" id="al-av"></span><button class="b warn" id="al-peek">espiar o teste</button><span class="mono" id="al-out" style="margin-left:10px"></span></div>
+    <div id="al-warn"></div>
+  </div>
+</section>
+
+<!-- 41 · s-onestep -->
+<section class="slide" id="s-onestep" data-sec="Forecasting">
+  <div class="kicker">o teste não é uma previsão única de 207 horas</div>
+  <h2>Uma hora à frente, repetidamente</h2>
+  <div class="flow" style="margin-top:32px">
+    <div class="node">Fechar hora t<small>observar y(t)</small></div><div class="arr"></div>
+    <div class="node hl">Prever<small>y(t+1)</small></div><div class="arr"></div>
+    <div class="node">Fechar t+1<small>receber valor real</small></div><div class="arr"></div>
+    <div class="node hl">Prever<small>y(t+2)</small></div><div class="arr"></div><div class="node">…</div>
+  </div>
+  <ul class="ul">
+    <li>Uma observação de teste pode virar histórico <b>depois</b> que chega.</li>
+    <li>O modelo permanece <b>fixo</b>: não fazemos novo treinamento a cada hora.</li>
+    <li>A média de uma hora só está disponível após o fechamento da janela.</li>
+    <li>Prever várias horas sem receber observações seria outro problema (multi-passo), mais difícil.</li>
+  </ul>
+  <p class="big" style="margin-top:12px">No próximo slide, essa rotina roda sobre os <b>dados reais</b>.</p>
+</section>
+
+<!-- 42 · s-fc -->
 <section class="slide" id="s-fc" data-sec="Forecasting">
   <div class="kicker">aula 02 · o instante da previsão</div>
   <h2>Prever a próxima hora, uma hora de cada vez</h2>
@@ -389,46 +871,86 @@ table.t{border-collapse:collapse;font-family:var(--mono);font-size:12.5px;width:
   </div>
 </section>
 
-<!-- 16 · lags -->
-<section class="slide" id="s-lags" data-sec="Forecasting">
-  <div class="kicker">aula 02 · montagem da tabela</div>
-  <h2>Uma série vira tabela com lags</h2>
-  <p class="lead">Cada linha é uma hora-alvo u. <span class="mono">shift(k)</span> traz o valor de k horas <b>antes</b>. Clique numa linha.</p>
-  <div class="col" style="margin-top:12px;flex:1">
-    <canvas id="c-lags"></canvas>
-    <div class="controls"><span class="seg" id="lag-sign"></span><span class="note" id="lag-note"></span></div>
-    <div class="panel" style="padding:8px 12px"><table class="t" id="lag-t"></table></div>
+<!-- 43 · s-fc-result -->
+<section class="slide" id="s-fc-result" data-sec="Forecasting">
+  <div class="kicker">notebook 02 · seção 6</div>
+  <h2>A previsão melhora a referência?</h2>
+  <div class="cols" style="grid-template-columns:1.1fr 1fr;align-items:start;margin-top:12px">
+    <div class="figwrap" style="margin:0"><img src="../slides/figures/02_forecasting_06.png" alt="Real, persistência e Ridge nas primeiras 96 horas do teste" style="max-height:340px"><span class="cap">Primeiras 96 h do teste sequencial de uma hora à frente. Dados: Goldoni et al.</span></div>
+    <div>
+      <table class="t lg"><tr><th>teste (207 h)</th><th>MAE</th><th>RMSE</th></tr>
+        <tr><td>Persistência</td><td>0,661 dB</td><td>0,820 dB</td></tr>
+        <tr class="hl"><td>Ridge</td><td>0,535 dB</td><td>0,695 dB</td></tr></table>
+      <p class="big" style="margin-top:10px">Redução do MAE frente à persistência: <b>19,1%</b>.</p>
+      <ul class="ul sm">
+        <li>RSSI em dBm; MAE e RMSE em dB. Real −80, previsão −83 → erro absoluto de 3 dB.</li>
+        <li><b>MAE</b>: tamanho médio do erro. <b>RMSE</b>: dá mais peso aos desvios grandes.</li>
+        <li>Olhar os picos de erro: o modelo acompanha ou só atrasa os saltos?</li>
+        <li>É resultado do recorte e do protocolo, não uma promessa. Para alertas, seria preciso avaliar eventos e custos.</li>
+      </ul>
+    </div>
   </div>
 </section>
 
-<!-- 17 · alpha -->
-<section class="slide" id="s-alpha" data-sec="Forecasting">
-  <div class="kicker">aula 02 · Ridge e seleção</div>
-  <h2>Escolher α sem olhar o teste</h2>
-  <p class="lead">A Ridge minimiza <span class="mono">Σ erro² + α·Σ w²</span>. Escolha α pela <b>validação dentro do passado</b> (662 h de ajuste e 166 h de validação).</p>
-  <div class="body" style="flex-direction:column;gap:10px">
-    <div style="display:flex;gap:16px"><canvas id="c-alpha"></canvas><canvas id="c-coef"></canvas></div>
-    <div class="controls"><span class="label">α</span><input type="range" id="al-a" min="0" max="60" value="25" style="width:260px"><span class="mono" id="al-av"></span><button class="b warn" id="al-peek">espiar o teste</button><span class="mono" id="al-out" style="margin-left:10px"></span></div>
-    <div id="al-warn"></div>
-  </div>
+<!-- 44 · s-compare -->
+<section class="slide" id="s-compare" data-sec="Forecasting">
+  <div class="kicker">fechar o notebook 02 · seção 7</div>
+  <h2>O que mudou entre as duas práticas?</h2>
+  <table class="t lg" style="margin-top:22px;font-size:17px">
+    <tr><th></th><th>Localização</th><th>Forecasting</th></tr>
+    <tr><td><b>Uma linha</b></td><td>Um pacote, vários gateways</td><td>Uma hora-alvo, vários lags</td></tr>
+    <tr><td><b>Resposta</b></td><td>Posição do transmissor</td><td>RSSI da próxima hora</td></tr>
+    <tr><td><b>Referência</b></td><td>Centroide; constante como controle</td><td>Persistência</td></tr>
+    <tr><td><b>Métrica</b></td><td>Distância em metros</td><td>Erro em dB</td></tr>
+    <tr><td><b>Divisão</b></td><td>Dias inteiros, em ordem</td><td>Passado treina, futuro testa</td></tr>
+    <tr><td><b>Limite</b></td><td>Não provamos generalização espacial</td><td>Não demonstramos previsão de falha</td></tr>
+  </table>
 </section>
 
-<!-- 18 · quiz -->
+<!-- 45 · s-quiz -->
 <section class="slide" id="s-quiz" data-sec="Discussão">
   <div class="kicker">armadilhas · 20 min</div>
   <h2>Vazou ou não vazou?</h2>
   <p class="lead">Pergunta-guia: <b>essa informação estaria disponível quando a decisão fosse tomada?</b> Clique nos cartões.</p>
   <div class="quiz" id="quiz"></div>
+  <div class="blk limit" style="margin-top:12px"><h4>outro cuidado</h4><p>Escolher filtros, parâmetros ou a semente repetidamente pelo resultado de teste faz o teste participar do desenvolvimento.</p></div>
 </section>
 
-<!-- 19 · síntese -->
+<!-- 46 · s-metric -->
+<section class="slide" id="s-metric" data-sec="Discussão">
+  <div class="kicker">o que faltaria para uma aplicação real?</div>
+  <h2>Uma boa métrica não encerra a análise</h2>
+  <div class="cols" style="margin-top:24px">
+    <div class="blk"><h4>representatividade</h4><p>Quais lugares, dispositivos e períodos ficaram de fora?</p></div>
+    <div class="blk"><h4>generalização</h4><p>Treino bom e teste ruim podem indicar <b>overfitting</b> ou mudança de condições.</p></div>
+    <div class="blk"><h4>utilidade</h4><p>Qual erro é tolerável? Quanto custa uma decisão errada?</p></div>
+    <div class="blk"><h4>observabilidade</h4><p>Só vemos recepções: não inferimos PDR sem as transmissões perdidas.</p></div>
+  </div>
+</section>
+
+<!-- 47 · s-end -->
 <section class="slide" id="s-end" data-sec="Síntese">
   <div class="kicker">síntese · 15 min</div>
   <h2>Aplicar o método a outra telemetria</h2>
-  <p class="lead">Antes de escolher o algoritmo, justificar <b>dados, instante e avaliação</b>. Escolha um exemplo:</p>
+  <p class="lead">Exercício de fechamento. Antes de escolher o algoritmo, justificar <b>dados, instante e avaliação</b>. Sugestões: latência, throughput, ocupação de canal ou qualidade de enlace.</p>
   <div class="controls" style="margin-top:14px"><span class="seg" id="end-p"></span></div>
   <div class="panel tpl" style="margin-top:16px" id="end-tpl"></div>
   <p class="note" style="margin-top:auto">Dados: Aernouts et al. (Antwerp, CC BY 4.0) · Goldoni et al. (CC BY-SA 4.0) · López Escobar et al. (Sálvora, CC BY 4.0). Notebooks e slides: github.com/LorenzoDonatti/ML_meets_networks_ERRC2026</p>
+</section>
+
+<!-- 48 · s-refs -->
+<section class="slide" id="s-refs" data-sec="Síntese">
+  <div class="kicker">ERRC 2026</div>
+  <h2>Referências e materiais</h2>
+  <ul class="ul" style="font-size:16px;margin-top:22px">
+    <li>Aernouts et al. <i>Sigfox and LoRaWAN Datasets for Fingerprint Localization in Large Urban and Rural Areas</i>. Data, 2018. <span class="mono note">doi.org/10.3390/data3020013</span></li>
+    <li>Goldoni et al. <i>Correlation between weather and signal strength in LoRaWAN networks: An extensive dataset</i>. Computer Networks, 2022. <span class="mono note">doi.org/10.1016/j.comnet.2021.108627</span></li>
+    <li>López Escobar et al. <i>LoRa signal quality and GPS positioning time series dataset</i>, 2024. <span class="mono note">doi.org/10.5281/zenodo.13835721</span></li>
+    <li>Anagnostopoulos e Kalousis. <i>A Reproducible Comparison of RSSI Fingerprinting Localization Methods Using LoRaWAN</i>, 2019. <span class="mono note">arxiv.org/abs/1908.05085</span></li>
+    <li>The Things Network: LoRa, LoRaWAN, RSSI e SNR. <span class="mono note">thethingsnetwork.org/docs/lorawan</span></li>
+    <li>Para estudar depois: scikit-learn, <i>Common pitfalls</i>, e Hyndman e Athanasopoulos, <i>Forecasting: Principles and Practice</i>.</li>
+  </ul>
+  <div class="blk" style="margin-top:20px"><h4>notebooks, dados preparados e slides</h4><p class="mono">github.com/LorenzoDonatti/ML_meets_networks_ERRC2026</p></div>
 </section>
 
 <div id="chrome"><span>ML meets networks · ERRC 2026</span><span id="sec"></span><div class="prog"><i id="progbar"></i></div><span id="num"></span><button id="bt-theme" title="Tema (T)">◐ tema</button><button id="bt-full" title="Tela cheia (F)">⛶</button></div>
@@ -960,7 +1482,7 @@ addEventListener('keydown',e=>{const tg=e.target.tagName,typing=tg==='INPUT'||tg
   else if(e.key==='PageUp'||(!typing&&(e.key==='ArrowLeft'||e.key==='ArrowUp'))){e.preventDefault();go(cur-1);}
   else if(!typing&&e.key==='Home')go(0);else if(!typing&&e.key==='End')go(slides.length-1);
   else if(!typing&&(e.key==='t'||e.key==='T'))toggleTheme();else if(!typing&&(e.key==='f'||e.key==='F'))toggleFull();});
-document.addEventListener('pointerup',()=>{const a=document.activeElement;if(a&&(a.type==='range'||a.tagName==='BUTTON'))setTimeout(()=>a.blur(),0);});
+document.addEventListener('pointerup',()=>{const a=document.activeElement;if(a&&(a.type==='range'||a.tagName==='BUTTON'||a.tagName==='SUMMARY'))setTimeout(()=>a.blur(),0);});
 addEventListener('hashchange',()=>{const n=parseInt(location.hash.slice(1));if(n)go(n-1);});
 readColors();go((parseInt(location.hash.slice(1))||1)-1);
 let last=performance.now();
