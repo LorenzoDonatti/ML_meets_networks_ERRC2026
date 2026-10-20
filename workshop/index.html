@@ -294,9 +294,12 @@ details.reveal p{margin-top:6px}
   <p class="lead">Um <b>chirp</b> é um "assobio" que desliza do grave ao agudo dentro de 125 kHz. Cada símbolo é um chirp, e a informação está em <b>onde ele começa</b>.</p>
   <div class="body">
     <div class="col">
+      <div class="controls"><span class="seg" id="chirp-view"></span></div>
       <canvas id="c-chirp"></canvas>
       <div class="controls"><span class="label">Spreading factor</span><span class="seg" id="chirp-sf"></span><button class="b" id="chirp-new">sortear dados</button></div>
-      <div class="controls"><span class="label">eixo do tempo</span><span class="seg" id="chirp-scale"></span></div>
+      <div class="controls" id="chirp-row-scale"><span class="label">eixo do tempo</span><span class="seg" id="chirp-scale"></span></div>
+      <div class="controls" id="chirp-row-wave" style="display:none"><button class="b" id="chirp-play">▶ ouvir (câmera lenta)</button><span class="note">a mesma subida do grave ao agudo, trazida para o som audível</span></div>
+      <div class="controls" id="chirp-row-demod" style="display:none"><span class="label">SNR</span><input type="range" id="chirp-snr" min="-32" max="5" value="-5"><span class="mono" id="chirp-snrv"></span><button class="b" id="chirp-rx">nova recepção</button><span class="mono" id="chirp-rxout" style="font-size:12.5px"></span></div>
     </div>
     <div class="panel side">
       <div class="grid2">
@@ -1054,8 +1057,60 @@ function drawDev(ctx,x,y){ctx.strokeStyle=A(C.pkt,.55);ctx.lineWidth=2;ctx.begin
 })();
 
 /* ============ 2 · chirp ============ */
-(function(){const c=cv('c-chirp',800,370);let sf=7,vals=[];
-  const newVals=()=>{vals=Array.from({length:4},()=>Math.floor(Math.random()*2**sf));upd();};
+(function(){const c=cv('c-chirp',800,330);let sf=7,vals=[],view='freq',snr=-5,rx=null,acc=0,nAcc=0,player=null,rxTimer=null;
+  const newVals=()=>{vals=Array.from({length:4},()=>Math.floor(Math.random()*2**sf));upd();if(view==='demod')newRx();};
+  /* --- receptor: multiplica pelo chirp de referência (descendo) e procura a posição com mais energia (FFT) --- */
+  function fft(re,im){const n=re.length;for(let i=1,j=0;i<n;i++){let b=n>>1;for(;j&b;b>>=1)j^=b;j^=b;if(i<j){let x=re[i];re[i]=re[j];re[j]=x;x=im[i];im[i]=im[j];im[j]=x;}}
+    for(let len=2;len<=n;len<<=1){const ang=-2*Math.PI/len,wr=Math.cos(ang),wi=Math.sin(ang),hl=len>>1;for(let i=0;i<n;i+=len){let cr=1,ci=0;for(let k=0;k<hl;k++){const a=i+k,b=a+hl,tr=re[b]*cr-im[b]*ci,ti=re[b]*ci+im[b]*cr;re[b]=re[a]-tr;im[b]=im[a]-ti;re[a]+=tr;im[a]+=ti;const nr=cr*wr-ci*wi;ci=cr*wi+ci*wr;cr=nr;}}}}
+  function rxOnce(v,M,snrDb){const s=Math.sqrt(10**(-snrDb/10)/2),re=new Float64Array(M),im=new Float64Array(M);
+    for(let n=0;n<M;n++){const sig=2*Math.PI*(n*n/(2*M)+(v/M-.5)*n),ref=-2*Math.PI*(n*n/(2*M)-.5*n);
+      const r1=Math.cos(sig)+s*gaussR(),i1=Math.sin(sig)+s*gaussR(),cr=Math.cos(ref),ci=Math.sin(ref);re[n]=r1*cr-i1*ci;im[n]=r1*ci+i1*cr;}
+    fft(re,im);const p=new Float64Array(M);let best=0;for(let k=0;k<M;k++){p[k]=re[k]*re[k]+im[k]*im[k];if(p[k]>p[best])best=k;}return{p,best};}
+  function newRx(){const M=2**sf,v=vals[0];rx=rxOnce(v,M,snr);nAcc=sf>=11?60:150;let ok=0;for(let i=0;i<nAcc;i++){const vv=Math.floor(Math.random()*M);if(rxOnce(vv,M,snr).best===vv)ok++;}acc=ok/nAcc;
+    const hit=rx.best===v;$('chirp-snrv').textContent=fmt(snr)+' dB';
+    $('chirp-rxout').innerHTML=`enviado <b>${v}</b> · lido <b style="color:var(--${hit?'good':'bad'})">${rx.best} ${hit?'✓':'✗'}</b> · acerto em ${nAcc} símbolos: <b>${fmt(acc*100)}%</b>`;}
+  $('chirp-snr').oninput=e=>{snr=+e.target.value;$('chirp-snrv').textContent=fmt(snr)+' dB';clearTimeout(rxTimer);rxTimer=setTimeout(newRx,90);};
+  $('chirp-rx').onclick=()=>newRx();
+  /* --- som do chirp em câmera lenta (400 → 1600 Hz) --- */
+  function stopAudio(){if(player){try{player.o.stop();}catch(e){}try{player.ac.close();}catch(e){}player=null;}$('chirp-play').textContent='▶ ouvir (câmera lenta)';}
+  function ouvir(){if(player){stopAudio();return;}const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+    const ac=new AC(),o=ac.createOscillator(),g=ac.createGain(),d=.06*2**(sf-7),M=2**sf,FL=400,FH=1600;o.type='sine';o.connect(g);g.connect(ac.destination);
+    let T=ac.currentTime+.06;g.gain.setValueAtTime(0,T-.05);g.gain.linearRampToValueAtTime(.18,T);
+    for(const v of[0,0,vals[0],vals[1]]){const f0=FL+(FH-FL)*v/M,tw=T+d*(1-v/M);o.frequency.setValueAtTime(f0,T);o.frequency.linearRampToValueAtTime(FH,tw);o.frequency.setValueAtTime(FL,tw);if(v>0)o.frequency.linearRampToValueAtTime(f0,T+d);T+=d;}
+    g.gain.setValueAtTime(.18,T);g.gain.linearRampToValueAtTime(0,T+.05);o.start();o.stop(T+.06);o.onended=()=>{if(player&&player.o===o)stopAudio();};player={ac,o};$('chirp-play').textContent='■ parar';}
+  $('chirp-play').onclick=ouvir;
+  /* --- aba "a onda de verdade" --- */
+  function drawWave(t){const{ctx,w,h}=c;bg(c);const x0=56,x1=w-16,wy0=40,wy1=h-128,fy0=h-100,fy1=h-46,M=2**sf,ts=M/125;
+    const sy=[{k:'up',lab:'preâmbulo'},{k:'up',lab:'preâmbulo'},{k:'d',v:vals[0],lab:'dado v = '+vals[0]},{k:'d',v:vals[1],lab:'dado v = '+vals[1]}];
+    const n=sy.length,sw=(x1-x0)/n,FL=2.5,FH=12,S0=360,mid=(wy0+wy1)/2,amp=(wy1-wy0)/2-4,play=(t*.4)%(n+.8);
+    const frac=(s,u)=>s.k==='up'?u:((s.v/M+u)%1);const pts=[],fpts=[];let ph=0;
+    sy.forEach((s,k)=>{for(let i=0;i<=S0;i++){const u=i/S0,fr=frac(s,u);ph+=2*Math.PI*(FL+(FH-FL)*fr)/S0;pts.push([x0+(k+u)*sw,mid-amp*Math.sin(ph)]);fpts.push([x0+(k+u)*sw,fy1-fr*(fy1-fy0),i===0]);}});
+    ctx.strokeStyle=C.grid;ctx.lineWidth=1;ctx.setLineDash([3,4]);ctx.beginPath();for(let k=0;k<=n;k++){ctx.moveTo(x0+k*sw,wy0-8);ctx.lineTo(x0+k*sw,fy1);}ctx.stroke();ctx.setLineDash([]);
+    sy.forEach((s,k)=>txt(ctx,s.lab,x0+(k+.5)*sw,wy0-14,{a:'center',c:s.k==='up'?C.accent:C.pkt,s:11.5,w:700}));
+    txt(ctx,'onda',x0-8,mid+4,{a:'right',s:10.5});txt(ctx,'agudo',x0-8,fy0+4,{a:'right',s:10});txt(ctx,'grave',x0-8,fy1+4,{a:'right',s:10});
+    const path=(arr,col,lw,lim)=>{ctx.strokeStyle=col;ctx.lineWidth=lw;ctx.beginPath();let prevY=null;for(const p of arr){if(p[0]>lim)break;if(p[2]===undefined){prevY===null?ctx.moveTo(p[0],p[1]):ctx.lineTo(p[0],p[1]);}else{if(prevY===null||p[2]||p[1]>prevY+5)ctx.moveTo(p[0],p[1]);else ctx.lineTo(p[0],p[1]);}prevY=p[1];}ctx.stroke();};
+    const lim=x0+play*sw;path(pts,A(C.text,.18),1.3,x1);path(pts,C.text,1.6,lim);
+    ctx.strokeStyle=C.line;ctx.strokeRect(x0,fy0,x1-x0,fy1-fy0);path(fpts,A(C.accent,.3),2,x1);path(fpts,C.accent,2.4,lim);
+    sy.forEach((s,k)=>{if(s.k==='d'&&s.v>0){const xw=x0+(k+1-s.v/M)*sw;txt(ctx,'↓ volta ao grave',xw+4,fy0+12,{c:C.pkt,s:10});dot(ctx,x0+k*sw+1.5,fy1-(s.v/M)*(fy1-fy0),3.5,C.pkt);}});
+    if(play<n){ctx.strokeStyle=A(C.pkt,.8);ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(lim,wy0-6);ctx.lineTo(lim,fy1);ctx.stroke();}
+    txt(ctx,`Câmera lentíssima: no rádio, cada símbolo em SF${sf} dura ${fmt(ts,ts<10?2:1)} ms e tem ≈ ${fmt(Math.round(915e3*ts))} oscilações (915 MHz).`,x0,h-14,{c:C.text,s:11,w:600});}
+  /* --- aba "como o receptor lê o dado" --- */
+  function drawDemod(t){const{ctx,w,h}=c;bg(c);if(!rx)newRx();const M=2**sf,v=vals[0],s=Math.sqrt(10**(-snr/10)/2);
+    const lx=22,lw=236,ph=(h-30)/3;
+    const mini=(i,title,col,fn,noisy)=>{const y0=26+i*ph,top=y0+8,bot=y0+ph-16;txt(ctx,title,lx,y0,{c:col,s:11,w:700});ctx.strokeStyle=C.line;ctx.lineWidth=1;ctx.strokeRect(lx,top,lw,bot-top);
+      ctx.strokeStyle=col;ctx.lineWidth=2;ctx.beginPath();let prev=null;for(let k=0;k<=140;k++){const u=k/140;let f=fn(u);if(noisy)f=clamp(f+(Math.random()-.5)*Math.min(.9,s*.22),0,1);const X=lx+u*lw,Y=bot-f*(bot-top);if(prev===null||(!noisy&&f<prev-.3))ctx.moveTo(X,Y);else ctx.lineTo(X,Y);prev=f;}ctx.stroke();};
+    mini(0,'1 · recebido, começa em v (+ ruído)',C.pkt,u=>(v/M+u)%1,true);
+    mini(1,'2 · × referência (chirp descendo)',C.accent2,u=>1-u,false);
+    mini(2,'3 · = tom fixo na altura v',C.accent,()=>v/M,false);
+    const sx0=300,sx1=w-16,sy0=34,sy1=h-40,cols=Math.min(M,Math.floor(sx1-sx0)),bw=(sx1-sx0)/cols;let mx=0;for(let k=0;k<M;k++)mx=Math.max(mx,rx.p[k]);
+    txt(ctx,'4 · energia em cada uma das '+fmt(M)+' posições: vence a maior',sx0,sy0-14,{c:C.text,s:11.5,w:700});
+    ctx.strokeStyle=C.line;ctx.beginPath();ctx.moveTo(sx0,sy1);ctx.lineTo(sx1,sy1);ctx.stroke();
+    for(let cI=0;cI<cols;cI++){const a=Math.floor(cI*M/cols),b=Math.max(a+1,Math.floor((cI+1)*M/cols));let m=0,hasBest=false;for(let k=a;k<b;k++){m=Math.max(m,rx.p[k]);if(k===rx.best)hasBest=true;}
+      const hh=m/mx*(sy1-sy0);ctx.fillStyle=hasBest?(rx.best===v?C.good:C.bad):A(C.muted,.55);ctx.fillRect(sx0+cI*bw,sy1-hh,Math.max(1,bw-(bw>3?1:0)),hh);}
+    const vx=sx0+(v+.5)*(sx1-sx0)/M;ctx.fillStyle=C.pkt;ctx.beginPath();ctx.moveTo(vx,sy1+4);ctx.lineTo(vx-6,sy1+14);ctx.lineTo(vx+6,sy1+14);ctx.fill();txt(ctx,'enviado',vx,sy1+26,{a:'center',c:C.pkt,s:10.5,w:700});
+    txt(ctx,'receptor ideal: o chip real precisa de ≈ 2–3 dB a mais',sx1,sy0+4,{a:'right',s:10});txt(ctx,'0',sx0,sy1+26,{s:10});txt(ctx,fmt(M-1),sx1,sy1+26,{a:'right',s:10});}
+  seg('chirp-view',[['freq','frequência × tempo'],['onda','a onda de verdade'],['demod','como o receptor lê o dado']],'freq',v=>{view=v;
+    $('chirp-row-scale').style.display=v==='freq'?'':'none';$('chirp-row-wave').style.display=v==='onda'?'':'none';$('chirp-row-demod').style.display=v==='demod'?'':'none';if(v!=='onda')stopAudio();if(v==='demod')newRx();});
   function upd(){const M=2**sf,ts=M/125;$('chirp-M').innerHTML=fmt(M);$('chirp-bits').innerHTML=sf;$('chirp-ts').innerHTML=fmt(ts,ts<10?2:1)+' <small>ms</small>';const rb=sf*125000/M*4/5;$('chirp-rb').innerHTML=(rb>=1000?fmt(rb/1000,2)+' <small>kbit/s</small>':fmt(rb,0)+' <small>bit/s</small>');
     $('chirp-data').innerHTML=vals.map(v=>`${v} → ${v.toString(2).padStart(sf,'0')}`).join('<br>');
     $('chirp-bars').innerHTML=[7,8,9,10,11,12].map(s=>{const t=2**s/125;return`<div class="fp" style="grid-template-columns:44px 1fr 74px"><span style="${s===sf?'color:var(--accent);font-weight:700':''}">SF${s}</span><div class="bar"><i style="width:${t/32.768*100}%;${s===sf?'':'opacity:.45'}"></i></div><span>${fmt(t,t<10?2:1)} ms</span></div>`;}).join('');}
@@ -1063,7 +1118,7 @@ function drawDev(ctx,x,y){ctx.strokeStyle=A(C.pkt,.55);ctx.lineWidth=2;ctx.begin
   $('chirp-new').onclick=newVals;
   let scale='ms';const WIN=40;
   seg('chirp-scale',[['ms','tempo real · janela de 40 ms'],['sym','1 coluna = 1 símbolo']],'ms',v=>scale=v);
-  S['s-chirp']={frame(t){const{ctx,w,h}=c;bg(c);const x0=62,x1=w-14,y0=40,y1=h-58,units=14,M=2**sf,ts=M/125,real=scale==='ms';
+  S['s-chirp']={leave:stopAudio,frame(t){if(view==='onda'){drawWave(t);return;}if(view==='demod'){drawDemod(t);return;}const{ctx,w,h}=c;bg(c);const x0=62,x1=w-14,y0=40,y1=h-58,units=14,M=2**sf,ts=M/125,real=scale==='ms';
     const uw=real?(x1-x0)*ts/WIN:(x1-x0)/units;
     const segs=[...Array(8)].map(()=>({k:'up'})).concat([{k:'dn'},{k:'dn'}],vals.map(v=>({k:'d',v})));
     ctx.strokeStyle=C.grid;ctx.lineWidth=1;ctx.beginPath();
