@@ -49,7 +49,7 @@ O tempo total inclui 15 min de motivação, 15 min de formulação, as duas prá
 ## Materiais
 
 - [Notebook 01](notebooks/01_localizacao.ipynb) e [notebook 02](notebooks/02_forecasting.ipynb).
-- [Slides em PDF](slides/minicurso.pdf): 33 páginas, Dresden com paleta LSC, sem logotipo. Abertura com as duas frentes do curso, introdução a LoRa/LoRaWAN, RSSI e SNR, diagramas de localização e previsão temporal e gráficos reais dos notebooks.
+- [Slides em PDF](slides/minicurso.pdf): 38 páginas.
 - [Fonte LaTeX completa](slides/minicurso.tex), [conteúdo e diagramas](slides/conteudo.tex), [template](slides/template.tex) e [instruções de compilação](slides/README.md).
 - [Dados, fontes, licenças e transformações](data/README.md).
 - [Dependências para execução local opcional](requirements.txt).

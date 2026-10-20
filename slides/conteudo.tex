@@ -28,6 +28,23 @@ Um enlace do dataset de Goldoni et al.
 \end{columns}
 \end{frame}
 
+\begin{frame}{A proposta do minicurso}{O que esperamos construir em 2h30}
+\begin{block}{Partir de uma pergunta de redes, não de um algoritmo}
+Aprender a transformar dados de uma rede sem fio em um problema de aprendizado
+de máquina e avaliar se a solução faz sentido.
+\end{block}
+\textbf{Ao final, esperamos que você consiga:}
+\begin{itemize}
+\item Definir o que prever e quais dados estarão disponíveis naquele instante.
+\item Explorar os dados e separar treino e teste de acordo com a pergunta.
+\item Executar um exemplo no Colab e comparar o modelo com uma referência simples.
+\item Interpretar erros e limitações antes de concluir que o modelo é útil para a rede.
+\end{itemize}
+\vspace{2mm}
+\small Dois estudos guiados: localização e previsão de RSSI.
+Não é uma formação completa em ML nem uma implantação em produção.
+\end{frame}
+
 \begin{frame}{Por que essas perguntas interessam a redes?}{Da aplicação ao dado}
 \begin{columns}[T]
 \column{.48\textwidth}
@@ -262,7 +279,7 @@ No teste, guardamos o GPS real para conferir o erro, não para produzir a estima
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Três estratégias para o mesmo problema}{Notebook 01 — seção 4; sem aprofundar os algoritmos}
+\begin{frame}{Três estratégias para o mesmo problema}{Notebook 01 — visão geral antes do ajuste}
 \small
 \begin{tabular}{p{2.5cm}p{5.3cm}p{4.2cm}}
 \toprule
@@ -275,6 +292,10 @@ Random Forest & Combina regras aprendidas por várias árvores & Fingerprints ro
 \end{tabular}
 \vspace{3mm}
 A posição mediana do treino é um \textbf{controle sem sinais}, não um sistema de localização.
+\[
+\widehat{\mathbf p}_{\rm controle}
+=\bigl(\operatorname{mediana}(x_i),\operatorname{mediana}(y_i)\bigr)_{\rm treino}
+\]
 \end{frame}
 
 \begin{frame}{Que generalização estamos avaliando?}{Notebook 01 — seção 3, antes de treinar}
@@ -294,6 +315,98 @@ A posição mediana do treino é um \textbf{controle sem sinais}, não um sistem
 \item Pergunta: localizar pacotes posteriores \textbf{desta rede}.
 \item Não é um teste em regiões inéditas nem em outra cidade.
 \end{itemize}
+\end{frame}
+
+\begin{frame}{Centroide: uma média das posições dos gateways}{Referência geométrica, sem treinamento}
+\small
+\setlength{\abovedisplayskip}{4pt}\setlength{\belowdisplayskip}{4pt}
+Para cada gateway recebido: $r_g$ é o RSSI em dBm e $\mathbf p_g=(x_g,y_g)$
+é sua posição em coordenadas locais, em metros.
+\[
+a_g=10^{(r_g-r_{\max})/10},
+\qquad
+\underbrace{\widehat{\mathbf p}=\frac{\sum_g a_g\,\mathbf p_g}{\sum_g a_g}}_{\text{média das posições, ponderada pela potência relativa}}
+\]
+\centering
+\begin{tikzpicture}
+\draw[thick] (0,0)--(8,0);
+\fill[lscgreen] (0,0) circle (.09);
+\fill[lscgreen] (8,0) circle (.09);
+\fill[black] (.727,0) circle (.09);
+\node[above] at (0,.12) {A: $-80$ dBm};
+\node[above] at (8,.12) {B: $-90$ dBm};
+\node[below] at (0,-.12) {$0$ m};
+\node[below] at (8,-.12) {$110$ m};
+\draw[arrow] (.727,-1)--(.727,-.15);
+\node[right] at (.85,-.85) {$\widehat x=(1\cdot0+0{,}1\cdot110)/1{,}1=10$ m};
+\end{tikzpicture}
+\par\vspace{2mm}\raggedright
+Exemplo fictício: A pesa dez vezes mais que B. $r_{\max}$ é o maior RSSI recebido.
+\par\vspace{2mm}
+\textbf{Limite:} não é trilateração nem conversão de RSSI em distância.
+Gateway ausente tem peso zero; com um único receptor, retorna a posição dele.
+\end{frame}
+
+\begin{frame}{$k$-NN: encontrar sinais parecidos}{Cinco vizinhos no espaço dos fingerprints, não no mapa}
+\small
+\setlength{\abovedisplayskip}{4pt}\setlength{\belowdisplayskip}{4pt}
+$\mathbf r$: novo vetor de RSSI; $\mathbf r_i$: vetor do treino;
+$\mathbf p_i$: posição conhecida daquele exemplo.
+\[
+d_i=\sqrt{\sum_{g=1}^{G}(r_g-r_{ig})^2},
+\qquad
+\widehat{\mathbf p}=
+\frac{\sum_{i\in N_5}(1/d_i)\,\mathbf p_i}{\sum_{i\in N_5}(1/d_i)}
+\]
+$G$ é o número de gateways; $N_5$ contém os cinco menores $d_i$.
+\par\vspace{3mm}
+\centering
+\begin{tikzpicture}
+\node[box] (q) at (0,0) {Novo fingerprint};
+\node[box] (n) at (4,0) {Buscar 5 exemplos\\mais semelhantes};
+\node[box] (p) at (8,0) {Combinar suas\\posições de treino};
+\draw[arrow] (q)--(n); \draw[arrow] (n)--(p);
+\end{tikzpicture}
+\par\vspace{1mm}\raggedright
+\textbf{Intuição:} distância de sinais 2 recebe o dobro do peso da distância 4.
+Se há distância zero, a implementação faz a média apenas dos vizinhos coincidentes.
+\par\vspace{2mm}
+\textbf{Cuidado:} ausência recebe o código $-140$ no notebook, que também afeta $d_i$.
+Fingerprints semelhantes não garantem posições próximas.
+\par\scriptsize \href{https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html}{Referência: scikit-learn, KNeighborsRegressor.}
+\end{frame}
+
+\begin{frame}{Random Forest: combinar árvores de regressão}{Cada árvore aprende divisões a partir dos sinais}
+\setlength{\abovedisplayskip}{4pt}\setlength{\belowdisplayskip}{4pt}
+\setlength{\abovedisplayshortskip}{0pt}\setlength{\belowdisplayshortskip}{0pt}
+\begin{columns}[T]
+\column{.46\textwidth}
+\centering
+\begin{tikzpicture}
+\node[box,text width=2.5cm] (root) at (0,0) {RSSI A $\leq -95$?};
+\node[box,text width=1.7cm] (l) at (-1.6,-1.6) {Folha L\\$(20,40)$ m};
+\node[box,text width=1.7cm] (r) at (1.6,-1.6) {Folha R\\$(90,60)$ m};
+\draw[arrow] (root)--node[left,font=\scriptsize]{sim}(l);
+\draw[arrow] (root)--node[right,font=\scriptsize]{não}(r);
+\end{tikzpicture}
+\par\scriptsize Árvore simplificada; valores fictícios.
+\column{.51\textwidth}
+\small
+Na folha, a árvore retorna a média das posições dos exemplos de treino que chegaram ali.
+\[
+\widehat{\mathbf p}_{\rm folha}
+=\frac{1}{n_{\rm folha}}\sum_{i\in{\rm folha}}\mathbf p_i
+\]
+A floresta combina $T$ árvores ($T=100$ no notebook):
+\[
+\widehat{\mathbf p}=\frac{1}{T}\sum_{t=1}^{T}\widehat{\mathbf p}_t
+\]
+\footnotesize Cada árvore usa uma reamostragem do treino.
+\end{columns}
+\vspace{2mm}
+\small Divisões reduzem o erro quadrático dentro das folhas. A média reduz variabilidade,
+mas não corrige dados pouco representativos.
+\par\scriptsize \href{https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html}{Referência: scikit-learn, RandomForestRegressor.}
 \end{frame}
 
 \begin{frame}{Erro em metros: o que significa?}{Notebook 01 — seção 5}
@@ -389,7 +502,7 @@ X(u)=[y(u-1),y(u-2),y(u-3),y(u-6),y(u-24)]
 \end{itemize}
 \end{frame}
 
-\begin{frame}{O que o modelo precisa superar?}{Notebook 02 — seção 5}
+\begin{frame}{Persistência: o que o modelo precisa superar?}{Notebook 02 — seção 5; sem treinamento}
 \begin{columns}[T]
 \column{.46\textwidth}
 \begin{block}{Persistência}
@@ -400,14 +513,43 @@ Repete o último valor disponível.\\[2mm]
 Sem treinamento; uma referência natural para uma série pouco variável.
 \end{block}
 \column{.50\textwidth}
-\begin{block}{Regressão Ridge}
+\begin{block}{Exemplo fictício}
+Último RSSI horário: $-82$ dBm.\\
+Previsão seguinte: $-82$ dBm.\\[2mm]
+Se o valor real for $-80$ dBm:
 \[
-\widehat y(u)=b+\sum_j w_j\,y(u-k_j)
+|y(u)-\widehat y(u)|=2\ {\rm dB}.
 \]
-Aprende uma combinação dos lags, com penalização dos coeficientes.\\[2mm]
-Pesos e escala vêm apenas do treino.
 \end{block}
 \end{columns}
+\vspace{3mm}
+$y(u)$ é o RSSI da hora-alvo; o chapéu em $\widehat y(u)$ indica uma estimativa.
+\par\vspace{2mm}
+\textbf{Limite:} repete o passado mais recente; não antecipa uma mudança brusca.
+\end{frame}
+
+\begin{frame}{Ridge: aprender quanto cada lag contribui}{Combinação linear com penalização dos coeficientes}
+\small
+\setlength{\abovedisplayskip}{4pt}\setlength{\belowdisplayskip}{4pt}
+\setlength{\abovedisplayshortskip}{0pt}\setlength{\belowdisplayshortskip}{0pt}
+Cada lag usa média $\mu_j$ e desvio $\sigma_j$ do \textbf{treino}:
+\[
+z_j(u)=\frac{y(u-k_j)-\mu_j}{\sigma_j},
+\qquad
+\widehat y(u)=b+\sum_{j=1}^{5}w_jz_j(u).
+\]
+$k_j$: atraso (1, 2, 3, 6 ou 24 h); $b$: intercepto; $w_j$: peso aprendido.
+\[
+\min_{b,\mathbf w}\left[
+\underbrace{\sum_{u\in{\rm treino}}(y(u)-\widehat y(u))^2}_{\text{errar pouco nos exemplos}}
++
+\underbrace{\alpha\sum_{j=1}^{5}w_j^2}_{\text{penalizar pesos muito grandes}}
+\right]
+\]
+\textbf{Como ler:} erro + penalização. No notebook, $\alpha=1$ fixo.
+\par\vspace{2mm}
+\textbf{Não é uma média ponderada:} os pesos podem ser negativos e não precisam somar 1.
+\par\scriptsize \href{https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html}{Referência: scikit-learn, Ridge.}
 \end{frame}
 
 \begin{frame}{Uma hora à frente, repetidamente}{O teste não é uma previsão única de 207 horas}
