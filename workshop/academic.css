@@ -1,0 +1,57 @@
+/* Identidade da apresentação Beamer/LSC; interações permanecem no HTML. */
+:root,:root[data-theme="light"] {
+  --bg:#ffffff;--panel:#ffffff;--panel2:#edf5f5;--line:#bdcece;--grid:#e5eded;
+  --text:#202828;--muted:#536363;--accent:#008289;--accent2:#45668a;
+  --pkt:#996200;--bad:#ad3434;--good:#29724e;
+  --sans:"Segoe UI",Arial,sans-serif;
+}
+:root[data-theme="dark"] {
+  --bg:#182525;--panel:#182525;--panel2:#243737;--line:#496060;--grid:#2c4141;
+  --text:#eef3f3;--muted:#b3c5c5;--accent:#69c5c9;--accent2:#a6bfdc;
+  --pkt:#e7bb69;--bad:#f18d8d;--good:#88c9a5;
+}
+#deck{background:#d8dfdf}
+.slide.active{animation:none}
+.slide:not(#s-title)::before{content:"";position:absolute;z-index:-1;left:0;right:0;top:23px;height:70px;background:#008289}
+.slide{isolation:isolate}
+.kicker{font:14px var(--sans);letter-spacing:0;text-transform:none;color:white;gap:0}
+.kicker::before{display:none}
+h2{font-size:30px;font-weight:400;letter-spacing:0;line-height:36px;color:white;margin:4px 0 9px}
+.lead{font-size:17px}
+#sections{position:absolute;top:0;left:0;right:0;height:23px;display:flex;justify-content:space-around;align-items:center;background:#329ba0;z-index:6;padding:0 35px}
+#sections button{border:0;background:none;color:#e1eeee;font:12px var(--sans);cursor:pointer;padding:2px 8px}
+#sections button[aria-current]{color:white;text-decoration:underline;text-underline-offset:3px}
+.panel,.blk,.node,.step,.card .f,.card .k,.formula,.vec,.warnbox,.agenda div,canvas,.figwrap img{border-radius:0;box-shadow:none}
+.panel{border:0;border-top:1px solid var(--line);padding-top:12px}
+.blk{border:0;border-left:2px solid var(--accent);background:var(--panel2)}
+.blk h4{font:600 16px var(--sans);text-transform:none;letter-spacing:0}
+.blk p{font-size:17px}
+.label{font:13px var(--sans);letter-spacing:0;text-transform:none}
+.stat{font:500 24px var(--sans)}
+.chip{border-radius:2px;font-family:var(--sans)}
+button.b{border-radius:2px;font-family:var(--sans)}
+button.b.on,.step.on .n{color:white;background:#008289}
+.step{transition:none;border-radius:0}
+.step:hover{transform:none}
+.step.on,.node.hl{box-shadow:none;border-color:var(--accent)}
+.pulse{display:none}
+.formula{background:transparent;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.card .in{transition:none}
+.figwrap img{border:0}
+.big b{color:var(--text)}
+.bar,.bar i{border-radius:0}
+#chrome{height:34px;background:#329ba0;color:white;font:12px var(--sans);padding:0 35px;gap:14px}
+#sec{color:white;text-transform:none;letter-spacing:0}
+#chrome .prog{height:1px;background:#69b7bb}
+#chrome .prog i{background:white}
+#chrome button{border:0;border-radius:0;color:white}
+#s-title .bgcanvas{visibility:hidden}
+.titlebox{margin:125px auto 0;max-width:1040px;width:100%;text-align:center}
+.titlebox .kicker{justify-content:center;color:var(--muted);font-size:18px}
+.titlebox h1{background:#008289;color:white;font-size:49px;font-weight:400;line-height:1.15;letter-spacing:0;padding:22px;margin:24px 0}
+.titlebox h1 span{color:white}
+.titlebox .lead{max-width:900px;margin:auto;font-size:23px;color:var(--text)}
+.authors{font-size:19px;margin-top:32px}
+.hint{font:13px var(--sans);margin-top:30px}
+button:focus-visible,summary:focus-visible{outline:2px solid var(--pkt);outline-offset:3px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

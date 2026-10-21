@@ -192,17 +192,19 @@ details.reveal p{margin-top:6px}
 .tl b{font-family:var(--mono);color:var(--accent);text-align:right;font-size:15px}
 .tl b::after{content:" min";font-size:11px;color:var(--muted);font-weight:400}
 </style>
+<link rel="stylesheet" href="academic.css">
 </head>
 <body>
 <div id="deck"><div id="stage">
+<nav id="sections" aria-label="Seções da apresentação"></nav>
 
 <!-- 01 · s-title -->
 <section class="slide" id="s-title" data-sec="Abertura">
   <canvas id="c-title" class="bgcanvas"></canvas>
   <div class="titlebox">
-    <div class="kicker">ERRC 2026 · minicurso · workshop interativo</div>
+    <div class="kicker">Escola Regional de Redes de Computadores · 2026</div>
     <h1>Machine Learning<br><span>meets Networks</span></h1>
-    <p class="lead">Do pacote LoRa ao modelo: como formular, treinar e avaliar aprendizado de máquina em redes sem fio e IoT.</p>
+    <p class="lead">Guia prático para aplicações de aprendizado de máquina em redes sem fio e IoT</p>
     <div class="authors">Lorenzo Moreira Donatti · Deivis Felipe Guerreiro Fagundes</div>
     <div class="hint mono">→ ou PageDown avança · ← volta · T troca o tema · F tela cheia</div>
   </div>
@@ -1628,13 +1630,19 @@ const hourLabel=i=>{const d=new Date(FC.t0+i*3600e3);return`${String(d.getUTCDat
 
 /* ============ motor dos slides ============ */
 const slides=[...document.querySelectorAll('.slide')];let cur=-1;
+const sectionButtons=[...new Set(slides.map(s=>s.dataset.sec))].map(name=>{
+  const button=document.createElement('button');button.textContent=name;
+  button.onclick=()=>go(slides.findIndex(s=>s.dataset.sec===name));
+  $('sections').append(button);return button;
+});
 function go(i){i=clamp(i,0,slides.length-1);if(i===cur)return;if(cur>=0){slides[cur].classList.remove('active');S[slides[cur].id]?.leave?.();}cur=i;const s=slides[i];s.classList.add('active');S[s.id]?.enter?.();
+  sectionButtons.forEach(b=>{if(b.textContent===s.dataset.sec)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');});
   $('num').textContent=String(i+1).padStart(2,'0')+' / '+slides.length;$('sec').textContent=s.dataset.sec;$('progbar').style.width=((i+1)/slides.length*100)+'%';try{history.replaceState(null,'','#'+(i+1));}catch(e){}}
 function fit(){const st=$('stage'),k=Math.min(innerWidth/1280,innerHeight/720);st.style.transform=`scale(${k})`;}
 addEventListener('resize',fit);fit();
 function theme(t){if(t)document.documentElement.dataset.theme=t;else delete document.documentElement.dataset.theme;readColors();try{localStorage.setItem('mlnet-theme',t||'');}catch(e){}}
-try{theme(localStorage.getItem('mlnet-theme')||'');}catch(e){theme('');}
-const toggleTheme=()=>theme(document.documentElement.dataset.theme==='light'?'':'light');
+try{theme(localStorage.getItem('mlnet-academic-theme')||'light');}catch(e){theme('light');}
+const toggleTheme=()=>{const t=document.documentElement.dataset.theme==='light'?'dark':'light';theme(t);try{localStorage.setItem('mlnet-academic-theme',t);}catch(e){}};
 const toggleFull=()=>{if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen?.();};
 $('bt-theme').onclick=toggleTheme;$('bt-full').onclick=toggleFull;
 addEventListener('keydown',e=>{const tg=e.target.tagName,typing=tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT';
